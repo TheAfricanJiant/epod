@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AudioPure - Music Library</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "background": "#121416",
+                        "surface-container": "#1e2022",
+                        "outline": "#8d9289",
+                        "primary-container": "#a8c69f",
+                        "surface": "#121416",
+                        "surface-dim": "#121416",
+                        "secondary": "#bec8cc",
+                        "surface-container-high": "#282a2c",
+                        "on-tertiary": "#323027",
+                        "inverse-on-surface": "#2f3133",
+                        "on-secondary": "#283235",
+                        "on-primary-fixed": "#082007",
+                        "outline-variant": "#434840",
+                        "on-background": "#e2e2e5",
+                        "error-container": "#93000a",
+                        "tertiary-fixed-dim": "#cbc6b9",
+                        "secondary-container": "#3e484c",
+                        "surface-container-lowest": "#0c0e10",
+                        "on-tertiary-container": "#4f4c42",
+                        "on-error": "#690005",
+                        "surface-variant": "#333537",
+                        "tertiary": "#ded9cb",
+                        "tertiary-container": "#c2bdb0",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary-container": "#acb7ba",
+                        "on-secondary-fixed-variant": "#3e484c",
+                        "inverse-primary": "#4a6545",
+                        "on-primary-container": "#395334",
+                        "on-surface": "#e2e2e5",
+                        "on-secondary-fixed": "#131d20",
+                        "error": "#ffb4ab",
+                        "primary": "#c3e2ba",
+                        "secondary-fixed-dim": "#bec8cc",
+                        "primary-fixed-dim": "#b1cfa7",
+                        "surface-bright": "#37393b",
+                        "on-primary-fixed-variant": "#334d2f",
+                        "tertiary-fixed": "#e7e2d4",
+                        "primary-fixed": "#ccebc2",
+                        "surface-container-low": "#1a1c1e",
+                        "inverse-surface": "#e2e2e5",
+                        "on-surface-variant": "#c3c8bd",
+                        "on-primary": "#1d361a",
+                        "surface-tint": "#b1cfa7",
+                        "surface-container-highest": "#333537",
+                        "on-tertiary-fixed-variant": "#49473c",
+                        "on-tertiary-fixed": "#1d1c13",
+                        "secondary-fixed": "#dae4e8"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "margin-desktop": "48px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "label-md": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["56px", { "lineHeight": "64px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-surface');
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Minimalist Scrollbar for lists */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: theme('colors.surface-variant');
+            border-radius: theme('borderRadius.full');
+        }
+
+        /* Ambient Glow Effect */
+        .glow-sage {
+            box-shadow: 0 0 20px -5px theme('colors.primary-container');
+        }
+
+        @keyframes progress-pulse {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; filter: brightness(1.2); }
+            100% { opacity: 0.8; }
+        }
+        .animate-progress {
+            animation: progress-pulse 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-body-md text-body-md overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="fixed w-full top-0 z-50 bg-surface dark:bg-surface flex justify-between items-center px-margin-mobile py-4 shadow-[0_4px_32px_rgba(0,0,0,0.4)] backdrop-blur-md bg-opacity-90">
+<button class="text-on-surface-variant dark:text-on-surface-variant hover:opacity-80 transition-opacity active:scale-95 duration-150 p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/50">
+<span class="material-symbols-outlined text-[24px]">settings_input_antenna</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-primary dark:text-primary tracking-tight font-bold">AudioPure</h1>
+<button class="text-on-surface-variant dark:text-on-surface-variant hover:opacity-80 transition-opacity active:scale-95 duration-150 p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/50">
+<span class="material-symbols-outlined text-[24px]">battery_charging_full</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow pt-[88px] pb-[104px] md:pb-8 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto w-full flex flex-col gap-8">
+<!-- Add Music Section (Bento Grid) -->
+<section class="flex flex-col gap-4">
+<h2 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest pl-1">Ingest Media</h2>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<button class="flex flex-col items-center justify-center gap-3 bg-surface-container rounded-xl p-6 hover:bg-surface-container-high transition-colors active:scale-[0.98] border border-transparent hover:border-surface-variant">
+<div class="w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[28px]">wifi_tethering</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface">Wi-Fi Transfer</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-3 bg-surface-container rounded-xl p-6 hover:bg-surface-container-high transition-colors active:scale-[0.98] border border-transparent hover:border-surface-variant">
+<div class="w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[28px]">usb</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface">USB Import</span>
+</button>
+<button class="hidden md:flex flex-col items-center justify-center gap-3 bg-surface-container rounded-xl p-6 hover:bg-surface-container-high transition-colors active:scale-[0.98] border border-transparent hover:border-surface-variant">
+<div class="w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[28px]">cloud_sync</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface">Cloud Sync</span>
+</button>
+<button class="hidden md:flex flex-col items-center justify-center gap-3 bg-surface-container rounded-xl p-6 hover:bg-surface-container-high transition-colors active:scale-[0.98] border border-transparent hover:border-surface-variant">
+<div class="w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[28px]">dns</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface">NAS Connect</span>
+</button>
+</div>
+</section>
+<!-- Transfer Active Progress -->
+<section class="flex flex-col gap-4">
+<h2 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest pl-1 flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                Transfer Active
+            </h2>
+<div class="bg-surface-container-high rounded-xl p-5 border border-surface-variant/50 relative overflow-hidden">
+<!-- Subtle background gradient for interaction level 2 feel -->
+<div class="absolute inset-0 bg-gradient-to-b from-[#2C3034]/20 to-transparent pointer-events-none"></div>
+<div class="relative z-10 flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<div class="flex gap-4 items-center">
+<div class="w-10 h-10 rounded-lg bg-surface-variant flex items-center justify-center text-primary glow-sage">
+<span class="material-symbols-outlined">sync</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-on-surface truncate max-w-[200px] md:max-w-md">04_Mahler_Symphony_No5.flac</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Receiving via Wi-Fi Direct</span>
+</div>
+</div>
+<span class="font-label-md text-label-md text-primary">68%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full animate-progress" style="width: 68%;"></div>
+</div>
+<div class="flex justify-between items-center mt-1">
+<span class="font-label-md text-label-md text-on-surface-variant">42.5 MB / 185 MB</span>
+<span class="font-label-md text-label-md text-on-surface-variant">12.4 MB/s</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SD Card Content List -->
+<section class="flex flex-col gap-4">
+<div class="flex justify-between items-end pl-1 mb-2">
+<h2 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">SD Card Content</h2>
+<span class="font-label-md text-label-md text-on-surface-variant">98 GB / 512 GB Free</span>
+</div>
+<div class="bg-surface-container rounded-xl overflow-hidden border border-surface-variant/30">
+<ul class="flex flex-col divide-y divide-surface-variant/30">
+<!-- List Item 1 -->
+<li class="flex items-center justify-between p-4 hover:bg-surface-container-high transition-colors group">
+<div class="flex items-center gap-4 min-w-0 flex-1">
+<span class="material-symbols-outlined text-on-surface-variant text-[24px]">audio_file</span>
+<div class="flex flex-col min-w-0">
+<span class="font-body-md text-body-md text-on-surface truncate">Dark_Side_Master_24bit_96kHz.wav</span>
+<div class="flex items-center gap-2 mt-1">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-primary/20 text-primary uppercase tracking-wider">WAV</span>
+<span class="font-label-md text-label-md text-on-surface-variant">142 MB</span>
+</div>
+</div>
+</div>
+<button class="p-2 rounded-full text-on-surface-variant opacity-0 group-hover:opacity-100 focus:opacity-100 hover:text-error hover:bg-error/10 transition-all focus:outline-none">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</li>
+<!-- List Item 2 -->
+<li class="flex items-center justify-between p-4 hover:bg-surface-container-high transition-colors group">
+<div class="flex items-center gap-4 min-w-0 flex-1">
+<span class="material-symbols-outlined text-on-surface-variant text-[24px]">audio_file</span>
+<div class="flex flex-col min-w-0">
+<span class="font-body-md text-body-md text-on-surface truncate">Miles_Davis_Kind_of_Blue.flac</span>
+<div class="flex items-center gap-2 mt-1">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-secondary-container text-on-secondary-container uppercase tracking-wider">FLAC</span>
+<span class="font-label-md text-label-md text-on-surface-variant">95 MB</span>
+</div>
+</div>
+</div>
+<button class="p-2 rounded-full text-on-surface-variant opacity-0 group-hover:opacity-100 focus:opacity-100 hover:text-error hover:bg-error/10 transition-all focus:outline-none">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</li>
+<!-- List Item 3 -->
+<li class="flex items-center justify-between p-4 hover:bg-surface-container-high transition-colors group">
+<div class="flex items-center gap-4 min-w-0 flex-1">
+<span class="material-symbols-outlined text-on-surface-variant text-[24px]">audio_file</span>
+<div class="flex flex-col min-w-0">
+<span class="font-body-md text-body-md text-on-surface truncate">Bicep_Isles_Album_Mix.flac</span>
+<div class="flex items-center gap-2 mt-1">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-secondary-container text-on-secondary-container uppercase tracking-wider">FLAC</span>
+<span class="font-label-md text-label-md text-on-surface-variant">310 MB</span>
+</div>
+</div>
+</div>
+<button class="p-2 rounded-full text-on-surface-variant opacity-0 group-hover:opacity-100 focus:opacity-100 hover:text-error hover:bg-error/10 transition-all focus:outline-none">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</li>
+<!-- List Item 4 -->
+<li class="flex items-center justify-between p-4 hover:bg-surface-container-high transition-colors group">
+<div class="flex items-center gap-4 min-w-0 flex-1">
+<span class="material-symbols-outlined text-on-surface-variant text-[24px]">audio_file</span>
+<div class="flex flex-col min-w-0">
+<span class="font-body-md text-body-md text-on-surface truncate">Nils_Frahm_Spaces_Live.wav</span>
+<div class="flex items-center gap-2 mt-1">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-primary/20 text-primary uppercase tracking-wider">WAV</span>
+<span class="font-label-md text-label-md text-on-surface-variant">850 MB</span>
+</div>
+</div>
+</div>
+<button class="p-2 rounded-full text-on-surface-variant opacity-0 group-hover:opacity-100 focus:opacity-100 hover:text-error hover:bg-error/10 transition-all focus:outline-none">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</li>
+</ul>
+</div>
+<button class="mt-4 mx-auto font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors flex items-center gap-2">
+                View All Files <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</section>
+</main>
+<!-- BottomNavBar (Mobile Only via md:hidden) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-3 pb-6 bg-surface-container dark:bg-surface-container shadow-[0_-4px_24px_rgba(0,0,0,0.5)] rounded-t-xl border-t-0">
+<!-- Scan -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:bg-surface-variant dark:hover:bg-surface-variant rounded-full active:scale-90 transition-transform duration-200">
+<span class="material-symbols-outlined">radar</span>
+<span class="font-label-md text-label-md mt-1">Scan</span>
+</button>
+<!-- Playing -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:bg-surface-variant dark:hover:bg-surface-variant rounded-full active:scale-90 transition-transform duration-200">
+<span class="material-symbols-outlined">graphic_eq</span>
+<span class="font-label-md text-label-md mt-1">Playing</span>
+</button>
+<!-- Library (Active State Logic Applied) -->
+<button class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary-container text-on-primary-container dark:text-on-primary-container rounded-full px-4 py-1 active:scale-90 transition-transform duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">library_music</span>
+<span class="font-label-md text-label-md mt-1">Library</span>
+</button>
+<!-- Status -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:bg-surface-variant dark:hover:bg-surface-variant rounded-full active:scale-90 transition-transform duration-200">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-md text-label-md mt-1">Status</span>
+</button>
+</nav>
+</body></html>

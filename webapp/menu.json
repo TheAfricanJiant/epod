@@ -1,0 +1,12 @@
+{
+  "restaurant": "ePod Kitchen",
+  "tagline": "Say \"next\" or \"back\" to browse  -  say \"hello world\" to order",
+  "items": [
+    { "image": "images/water fufu and eru.png",        "name": "Water Fufu & Eru",        "price": "2500", "note": "Steamed cassava with eru and smoked fish" },
+    { "image": "images/corn Fufu and vegitables.jpg",  "name": "Corn Fufu & Vegetables",  "price": "2000", "note": "Cornmeal fufu with garden huckleberry" },
+    { "image": "images/freid rice and chicken.jpg",    "name": "Fried Rice & Chicken",    "price": "3000", "note": "Wok rice, mixed vegetables, grilled chicken" },
+    { "image": "images/salvory noodles.png",           "name": "Savoury Noodles",         "price": "1800", "note": "Stir-fried noodles with peppers and herbs" },
+    { "image": "images/salad.jpg",                     "name": "Garden Salad",            "price": "1200", "note": "Crisp greens, tomato, avocado, house dressing" },
+    { "image": "images/Gemini_Generated_Image_9dvnr89dvnr89dvn.jpg", "name": "Chef's Special", "price": "3500", "note": "Ask your server for today's plate" }
+  ]
+}

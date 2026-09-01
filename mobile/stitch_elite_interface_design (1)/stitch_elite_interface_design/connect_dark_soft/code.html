@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>e-Pod Connect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "background": "#121416",
+                      "surface-container": "#1e2022",
+                      "outline": "#8d9289",
+                      "primary-container": "#a8c69f",
+                      "surface": "#121416",
+                      "surface-dim": "#121416",
+                      "secondary": "#bec8cc",
+                      "surface-container-high": "#282a2c",
+                      "on-tertiary": "#323027",
+                      "inverse-on-surface": "#2f3133",
+                      "on-secondary": "#283235",
+                      "on-primary-fixed": "#082007",
+                      "outline-variant": "#434840",
+                      "on-background": "#e2e2e5",
+                      "error-container": "#93000a",
+                      "tertiary-fixed-dim": "#cbc6b9",
+                      "secondary-container": "#3e484c",
+                      "surface-container-lowest": "#0c0e10",
+                      "on-tertiary-container": "#4f4c42",
+                      "on-error": "#690005",
+                      "surface-variant": "#333537",
+                      "tertiary": "#ded9cb",
+                      "tertiary-container": "#c2bdb0",
+                      "on-error-container": "#ffdad6",
+                      "on-secondary-container": "#acb7ba",
+                      "on-secondary-fixed-variant": "#3e484c",
+                      "inverse-primary": "#4a6545",
+                      "on-primary-container": "#395334",
+                      "on-surface": "#e2e2e5",
+                      "on-secondary-fixed": "#131d20",
+                      "error": "#ffb4ab",
+                      "primary": "#c3e2ba",
+                      "secondary-fixed-dim": "#bec8cc",
+                      "primary-fixed-dim": "#b1cfa7",
+                      "surface-bright": "#37393b",
+                      "on-primary-fixed-variant": "#334d2f",
+                      "tertiary-fixed": "#e7e2d4",
+                      "primary-fixed": "#ccebc2",
+                      "surface-container-low": "#1a1c1e",
+                      "inverse-surface": "#e2e2e5",
+                      "on-surface-variant": "#c3c8bd",
+                      "on-primary": "#1d361a",
+                      "surface-tint": "#b1cfa7",
+                      "surface-container-highest": "#333537",
+                      "on-tertiary-fixed-variant": "#49473c",
+                      "on-tertiary-fixed": "#1d1c13",
+                      "secondary-fixed": "#dae4e8"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "base": "8px",
+                      "gutter": "24px",
+                      "container-max": "1280px",
+                      "margin-desktop": "48px",
+                      "margin-mobile": "16px"
+              },
+              "fontFamily": {
+                      "headline-lg-mobile": [
+                              "Hanken Grotesk"
+                      ],
+                      "body-md": [
+                              "Hanken Grotesk"
+                      ],
+                      "display-lg": [
+                              "Hanken Grotesk"
+                      ],
+                      "headline-lg": [
+                              "Hanken Grotesk"
+                      ],
+                      "label-md": [
+                              "Hanken Grotesk"
+                      ],
+                      "body-lg": [
+                              "Hanken Grotesk"
+                      ],
+                      "headline-md": [
+                              "Hanken Grotesk"
+                      ]
+              },
+              "fontSize": {
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-lg": [
+                              "56px",
+                              {
+                                      "lineHeight": "64px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.02em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Hanken Grotesk', sans-serif;
+            background-color: #121416; /* bg-background */
+            color: #e2e2e5; /* text-on-background */
+        }
+        
+        /* Custom radar animation styles */
+        .radar-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            overflow: hidden;
+            background-color: #1a1c1e; /* surface-container-low */
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.5);
+            margin: 0 auto;
+        }
+
+        .radar-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 1px solid rgba(195, 226, 186, 0.1); /* primary tint */
+        }
+
+        .radar-grid::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(195, 226, 186, 0.1);
+        }
+
+        .radar-grid::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 1px;
+            height: 100%;
+            background-color: rgba(195, 226, 186, 0.1);
+        }
+        
+        .radar-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 1px solid rgba(195, 226, 186, 0.1);
+            border-radius: 50%;
+        }
+        
+        .radar-circle-1 { width: 33%; height: 33%; }
+        .radar-circle-2 { width: 66%; height: 66%; }
+
+        .radar-sweep {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 50%;
+            height: 50%;
+            transform-origin: 0% 100%;
+            background: conic-gradient(
+                from 90deg at 0% 100%,
+                rgba(195, 226, 186, 0) 0deg,
+                rgba(195, 226, 186, 0.05) 45deg,
+                rgba(195, 226, 186, 0.4) 90deg
+            );
+            animation: sweep 4s linear infinite;
+        }
+
+        @keyframes sweep {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .pulse-dot {
+            width: 12px;
+            height: 12px;
+            background-color: #c3e2ba; /* primary */
+            border-radius: 50%;
+            box-shadow: 0 0 10px #c3e2ba, 0 0 20px #c3e2ba;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(195, 226, 186, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(195, 226, 186, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(195, 226, 186, 0); }
+        }
+        
+        /* Glassmorphism card utilities */
+        .glass-card {
+            background-color: rgba(30, 32, 34, 0.7); /* surface-container */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface w-full top-0 flex justify-between items-center px-margin-mobile py-4 w-full md:px-margin-desktop md:py-6">
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant dark:text-on-surface-variant hover:opacity-80 transition-opacity active:scale-95 duration-150 p-2 -ml-2 rounded-full focus:outline-none focus:ring-2 focus:ring-primary">
+<span class="material-symbols-outlined text-2xl">settings_input_antenna</span>
+</button>
+<h1 class="font-headline-md text-headline-md-mobile md:font-headline-md md:text-headline-md text-primary dark:text-primary tracking-tight">AudioPure</h1>
+</div>
+<button class="text-on-surface-variant dark:text-on-surface-variant hover:opacity-80 transition-opacity active:scale-95 duration-150 p-2 -mr-2 rounded-full focus:outline-none focus:ring-2 focus:ring-primary">
+<span class="material-symbols-outlined text-2xl">battery_charging_full</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop py-8 mb-24 md:mb-8 flex flex-col lg:flex-row gap-gutter">
+<!-- Radar Section (Left on Desktop, Top on Mobile) -->
+<section class="flex-1 flex flex-col items-center justify-center p-8 rounded-3xl glass-card relative overflow-hidden mb-8 lg:mb-0">
+<!-- Decorative background glow -->
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-surface-container-low pointer-events-none"></div>
+<div class="z-10 text-center mb-12">
+<h2 class="font-headline-md text-headline-md-mobile md:font-headline-lg md:text-headline-lg text-on-surface mb-2">Searching for e-Pod...</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Ensure your device is powered on and in pairing mode.</p>
+</div>
+<!-- Radar Scanner -->
+<div class="radar-container z-10 mb-8">
+<div class="radar-grid"></div>
+<div class="radar-circle radar-circle-1"></div>
+<div class="radar-circle radar-circle-2"></div>
+<div class="radar-sweep"></div>
+<!-- Center Point (Phone) -->
+<div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-surface-variant rounded-full p-2 z-20 shadow-lg border border-outline-variant/30">
+<span class="material-symbols-outlined text-on-surface text-xl">smartphone</span>
+</div>
+</div>
+<div class="z-10 flex items-center gap-2 mt-4 text-primary">
+<span class="pulse-dot w-3 h-3"></span>
+<span class="font-label-md text-label-md uppercase tracking-widest opacity-80">Scanning Frequencies</span>
+</div>
+</section>
+<!-- Devices List Section (Right on Desktop, Bottom on Mobile) -->
+<section class="flex-1 flex flex-col gap-4">
+<div class="flex justify-between items-end mb-2 px-2">
+<h3 class="font-headline-md text-headline-md-mobile text-on-surface">Available Devices</h3>
+<span class="font-label-md text-label-md text-on-surface-variant bg-surface-container-high px-3 py-1 rounded-full">2 Found</span>
+</div>
+<!-- Device Item 1: e-Pod Mk.II -->
+<div class="glass-card p-4 rounded-xl flex items-center justify-between group hover:bg-surface-container-high transition-colors duration-300">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center border border-outline-variant/50">
+<span class="material-symbols-outlined text-primary text-2xl">headphones</span>
+</div>
+<div>
+<h4 class="font-body-lg text-body-lg text-on-surface font-semibold mb-0.5">e-Pod Mk.II</h4>
+<div class="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">signal_cellular_alt</span> Strong</span>
+<span class="text-outline-variant">•</span>
+<span>Audio</span>
+</div>
+</div>
+</div>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-5 py-2.5 rounded-full hover:opacity-90 active:scale-95 transition-all shadow-[0_0_15px_rgba(195,226,186,0.3)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface focus:ring-primary">
+                    Connect
+                </button>
+</div>
+<!-- Device Item 2: e-Pod Proto-01 -->
+<div class="glass-card p-4 rounded-xl flex items-center justify-between group hover:bg-surface-container-high transition-colors duration-300">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center border border-outline-variant/50">
+<span class="material-symbols-outlined text-secondary text-2xl">headphones_battery</span>
+</div>
+<div>
+<h4 class="font-body-lg text-body-lg text-on-surface font-semibold mb-0.5">e-Pod Proto-01</h4>
+<div class="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm opacity-50">signal_cellular_alt_1_bar</span> Weak</span>
+<span class="text-outline-variant">•</span>
+<span>Audio</span>
+</div>
+</div>
+</div>
+<button class="bg-transparent border border-outline-variant text-on-surface font-label-md text-label-md px-5 py-2.5 rounded-full hover:border-primary hover:text-primary active:scale-95 transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface focus:ring-primary">
+                    Connect
+                </button>
+</div>
+<!-- Searching Placeholder -->
+<div class="p-4 rounded-xl border border-dashed border-outline-variant/30 flex items-center justify-center py-8 opacity-60 mt-4">
+<div class="flex flex-col items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined animate-spin opacity-50">refresh</span>
+<span class="font-label-md text-label-md">Looking for more...</span>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="bg-surface-container dark:bg-surface-container fixed bottom-0 w-full z-50 rounded-t-xl shadow-sm md:hidden flex justify-around items-center px-2 py-3 pb-safe">
+<!-- Scan (Active) -->
+<a class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary-container text-on-primary-container dark:text-on-primary-container rounded-full px-4 py-1 hover:opacity-80 active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">radar</span>
+<span class="font-label-md text-label-md">Scan</span>
+</a>
+<!-- Playing -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:bg-surface-variant dark:hover:bg-surface-variant rounded-full active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mb-1">graphic_eq</span>
+<span class="font-label-md text-label-md">Playing</span>
+</a>
+<!-- Library -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:bg-surface-variant dark:hover:bg-surface-variant rounded-full active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mb-1">library_music</span>
+<span class="font-label-md text-label-md">Library</span>
+</a>
+<!-- Status -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:bg-surface-variant dark:hover:bg-surface-variant rounded-full active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mb-1">analytics</span>
+<span class="font-label-md text-label-md">Status</span>
+</a>
+</nav>
+<!-- Desktop Side Nav (Visible md and up) - Optional for larger screens if required by design system, but omitted here to prioritize the split canvas layout for this specific 'Connect' task, keeping the focus linear as it's a transient state before full app use, though it's a primary tab. I'll add a simplified vertical version for desktop to respect the shell logic while keeping the focus on the main content. -->
+<aside class="hidden md:flex flex-col fixed left-0 top-0 h-full w-20 lg:w-64 bg-surface-container-lowest border-r border-outline-variant/10 pt-24 z-40 items-center lg:items-start px-4 transition-all">
+<nav class="flex flex-col gap-4 w-full mt-8">
+<a class="flex items-center gap-4 bg-primary-container text-on-primary-container px-3 py-3 rounded-xl hover:opacity-90 transition-opacity w-full justify-center lg:justify-start" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">radar</span>
+<span class="font-label-md text-label-md hidden lg:block">Scan</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant px-3 py-3 rounded-xl hover:bg-surface-variant transition-colors w-full justify-center lg:justify-start" href="#">
+<span class="material-symbols-outlined">graphic_eq</span>
+<span class="font-label-md text-label-md hidden lg:block">Playing</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant px-3 py-3 rounded-xl hover:bg-surface-variant transition-colors w-full justify-center lg:justify-start" href="#">
+<span class="material-symbols-outlined">library_music</span>
+<span class="font-label-md text-label-md hidden lg:block">Library</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant px-3 py-3 rounded-xl hover:bg-surface-variant transition-colors w-full justify-center lg:justify-start" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-md text-label-md hidden lg:block">Status</span>
+</a>
+</nav>
+</aside>
+<!-- Adjust main content padding for desktop sidebar -->
+<style>
+        @media (min-width: 768px) {
+            main { padding-left: calc(5rem + 48px); } /* 20 (w-20) = 5rem + margin-desktop */
+        }
+        @media (min-width: 1024px) {
+            main { padding-left: calc(16rem + 48px); } /* 64 (w-64) = 16rem + margin-desktop */
+        }
+    </style>
+</body></html>

@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ePod Signage</title>
+<style>
+  :root{
+    --bg:#0d0b12; --bg2:#171326; --ink:#f4efe7; --muted:#a89ec0;
+    --accent:#ffc46b; --accent2:#ff8a5c; --ok:#5ad6a0;
+    --ease:cubic-bezier(.22,.9,.28,1);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;background:
+      radial-gradient(1200px 800px at 50% -10%, #2a2140 0%, transparent 60%),
+      radial-gradient(900px 700px at 90% 110%, #3a1f2e 0%, transparent 55%),
+      var(--bg);
+    color:var(--ink);
+    font:16px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+    overflow:hidden;-webkit-font-smoothing:antialiased;
+  }
+  .screen{
+    position:fixed;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    opacity:0;visibility:hidden;transition:opacity .9s var(--ease),visibility .9s;
+  }
+  .screen.on{opacity:1;visibility:visible}
+
+  /* ---------- status pill ---------- */
+  #status{
+    position:fixed;top:18px;right:18px;z-index:60;display:flex;gap:8px;
+    align-items:center;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--muted);background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.09);border-radius:999px;padding:7px 14px;
+    backdrop-filter:blur(8px);transition:opacity .4s
+  }
+  #status .dot{width:8px;height:8px;border-radius:50%;background:#e0524a;
+    box-shadow:0 0 10px currentColor;transition:background .3s}
+  #status.live .dot{background:var(--ok)}
+  #status .tag{opacity:.55}
+  #status .tag.act{opacity:1;color:var(--accent)}
+
+  /* ---------- eyes ---------- */
+  .eyes{display:flex;gap:clamp(28px,7vw,72px)}
+  .eye{
+    width:clamp(90px,17vw,190px);height:clamp(90px,17vw,190px);
+    border-radius:50%;background:radial-gradient(circle at 38% 34%,#fffaf0,#c8bede 60%,#6f6390);
+    position:relative;overflow:hidden;
+    box-shadow:0 0 70px rgba(255,196,107,.16), inset 0 -12px 26px rgba(0,0,0,.35);
+  }
+  .pupil{
+    position:absolute;left:50%;top:50%;width:38%;height:38%;border-radius:50%;
+    background:radial-gradient(circle at 36% 30%,#4a4160,#14101f 70%);
+    transform:translate(-50%,-50%);
+    transition:transform 1.4s var(--ease);
+  }
+  .pupil::after{content:"";position:absolute;left:20%;top:16%;width:26%;height:26%;
+    border-radius:50%;background:rgba(255,255,255,.85)}
+  /* lids: closed by default (sleeping) */
+  .lid{position:absolute;left:-6%;width:112%;height:60%;background:var(--bg2);
+    transition:transform 1s var(--ease)}
+  .lid.top{top:-8%;border-radius:0 0 46% 46%/0 0 62% 62%;transform:translateY(0)}
+  .lid.bot{bottom:-8%;border-radius:46% 46% 0 0/62% 62% 0 0;transform:translateY(0)}
+  .awake .lid.top{transform:translateY(-88%)}
+  .awake .lid.bot{transform:translateY(88%)}
+  .awake .eye{animation:breathe 5s ease-in-out infinite}
+  .sleeping .eye{animation:snooze 4.4s ease-in-out infinite}
+  @keyframes snooze{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(7px) scale(.985)}}
+  @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
+  .awake.blink .lid.top{transform:translateY(0)}
+  .awake.blink .lid.bot{transform:translateY(0)}
+
+  .zzz{margin-top:34px;height:26px;color:var(--muted);letter-spacing:.5em;
+       font-size:20px;opacity:.55;animation:drift 3.4s ease-in-out infinite}
+  @keyframes drift{0%,100%{opacity:.25;transform:translateY(4px)}50%{opacity:.7;transform:translateY(-4px)}}
+
+  .hint{margin-top:44px;color:var(--muted);font-size:13px;letter-spacing:.22em;
+        text-transform:uppercase;opacity:.5}
+
+  /* ---------- wake / earphones ---------- */
+  #wake .line{
+    font-size:clamp(20px,3.4vw,34px);font-weight:300;letter-spacing:.02em;
+    text-align:center;margin-top:46px;opacity:0;transform:translateY(14px);
+    animation:rise .9s var(--ease) .5s forwards
+  }
+  #wake .sub{color:var(--muted);font-size:15px;margin-top:14px;opacity:0;
+    animation:rise .9s var(--ease) 1.15s forwards}
+  @keyframes rise{to{opacity:1;transform:none}}
+  .wave{display:flex;gap:5px;align-items:flex-end;height:34px;margin-top:34px;
+    opacity:0;animation:rise .8s var(--ease) 1.5s forwards}
+  .wave i{width:4px;border-radius:3px;background:linear-gradient(var(--accent),var(--accent2));
+    animation:eq 1.1s ease-in-out infinite}
+  @keyframes eq{0%,100%{height:8px;opacity:.5}50%{height:32px;opacity:1}}
+
+  /* ---------- menu ---------- */
+  #menu{justify-content:flex-start;padding:0}
+  .head{width:100%;padding:26px 34px 0;display:flex;align-items:baseline;
+    justify-content:space-between;gap:20px}
+  .brand{font-size:clamp(19px,2.4vw,26px);font-weight:600;letter-spacing:.01em}
+  .tagline{color:var(--muted);font-size:13px;letter-spacing:.05em}
+
+  .stage{flex:1;width:100%;position:relative;overflow:hidden}
+  /* The track is absolutely positioned so it has a definite width to measure
+     against. As a plain flex child it was content-sized, which left the cards'
+     flex-basis:100% resolving against nothing - they collapsed to the width of
+     their own text and the plates drifted off to one side instead of sitting
+     one-per-screen. translateX steps of 100% only line up if this is the exact
+     width of the stage. */
+  .track{position:absolute;inset:0;display:flex;will-change:transform;
+    transition:transform .72s var(--ease)}
+  .card{
+    flex:0 0 100%;width:100%;height:100%;
+    display:flex;flex-direction:column;align-items:center;
+    justify-content:center;padding:10px 6vw;
+    transform:scale(.86);opacity:.35;
+    transition:transform .72s var(--ease),opacity .72s var(--ease);
+  }
+  .card.active{transform:scale(1);opacity:1}
+  .plate{
+    width:min(42vh,68vw);max-height:52%;aspect-ratio:1;
+    border-radius:50%;object-fit:cover;flex:0 0 auto;
+    box-shadow:0 34px 70px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.07),
+               0 0 90px rgba(255,196,107,.10);
+    background:#221c30;
+  }
+  .card.active .plate{animation:float 7s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+  .name{margin-top:26px;font-size:clamp(21px,3vw,33px);font-weight:600;text-align:center}
+  .note{color:var(--muted);font-size:14px;margin-top:8px;text-align:center;max-width:34ch}
+  .price{margin-top:14px;font-size:clamp(17px,2.2vw,22px);color:var(--accent);
+    font-weight:600;letter-spacing:.04em}
+  .price small{color:var(--muted);font-weight:400;font-size:12px;margin-left:5px}
+
+  .dots{display:flex;gap:9px;justify-content:center;padding:20px 0 30px}
+  .dots i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2);
+    transition:all .45s var(--ease)}
+  .dots i.on{background:var(--accent);width:26px;border-radius:4px}
+
+  /* ---------- order toast ---------- */
+  #toast{
+    position:fixed;inset:0;z-index:80;display:flex;align-items:center;
+    justify-content:center;pointer-events:none;opacity:0;
+    transition:opacity .45s var(--ease);background:rgba(8,6,12,.62);
+    backdrop-filter:blur(7px)
+  }
+  #toast.on{opacity:1}
+  .toastbox{
+    background:linear-gradient(160deg,#221b33,#171223);border:1px solid rgba(255,255,255,.11);
+    border-radius:26px;padding:44px 56px;text-align:center;
+    box-shadow:0 30px 80px rgba(0,0,0,.6);transform:scale(.86);
+    transition:transform .55s var(--ease)
+  }
+  #toast.on .toastbox{transform:scale(1)}
+  .tick{width:82px;height:82px;margin:0 auto 20px}
+  .tick circle{fill:none;stroke:var(--ok);stroke-width:5;
+    stroke-dasharray:239;stroke-dashoffset:239}
+  .tick path{fill:none;stroke:var(--ok);stroke-width:7;stroke-linecap:round;
+    stroke-linejoin:round;stroke-dasharray:60;stroke-dashoffset:60}
+  #toast.on .tick circle{animation:draw .55s var(--ease) forwards}
+  #toast.on .tick path{animation:draw .4s var(--ease) .42s forwards}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  .toastbox h2{margin:0;font-size:25px;font-weight:600}
+  .toastbox p{margin:9px 0 0;color:var(--muted);font-size:15px}
+
+  .kbd{position:fixed;left:18px;bottom:16px;z-index:60;color:var(--muted);
+    font-size:11px;letter-spacing:.06em;opacity:.4}
+  @media (max-width:640px){ .head{padding:18px 20px 0} }
+</style>
+</head>
+<body>
+
+<div id="status"><span class="dot"></span><span id="statusText">offline</span>
+  <span class="tag" id="tagVision">vision</span><span class="tag" id="tagVoice">voice</span></div>
+
+<!-- 1. sleeping ------------------------------------------------------------->
+<section class="screen on" id="sleep">
+  <div class="eyes sleeping" id="eyesSleep">
+    <div class="eye"><div class="pupil"></div><div class="lid top"></div><div class="lid bot"></div></div>
+    <div class="eye"><div class="pupil"></div><div class="lid top"></div><div class="lid bot"></div></div>
+  </div>
+  <div class="zzz">z z z</div>
+  <div class="hint">waiting for a guest</div>
+</section>
+
+<!-- 2. waking up ------------------------------------------------------------>
+<section class="screen" id="wake">
+  <div class="eyes awake" id="eyesWake">
+    <div class="eye"><div class="pupil"></div><div class="lid top"></div><div class="lid bot"></div></div>
+    <div class="eye"><div class="pupil"></div><div class="lid top"></div><div class="lid bot"></div></div>
+  </div>
+  <div class="line">Welcome. Put your earphones on<br>and enjoy the music.</div>
+  <div class="sub">your menu is coming up</div>
+  <div class="wave" id="wave"></div>
+</section>
+
+<!-- 3. menu ----------------------------------------------------------------->
+<section class="screen" id="menu">
+  <div class="head"><div class="brand" id="brand">ePod Kitchen</div>
+    <div class="tagline" id="tagline"></div></div>
+  <div class="stage"><div class="track" id="track"></div></div>
+  <div class="dots" id="dots"></div>
+</section>
+
+<div id="toast"><div class="toastbox">
+  <svg class="tick" viewBox="0 0 90 90"><circle cx="45" cy="45" r="38"/><path d="M27 46 l12 12 l24 -26"/></svg>
+  <h2>Order placed</h2><p id="toastItem"></p>
+</div></div>
+
+<div class="kbd">D pause/resume loop &middot; space wake &middot; &larr; &rarr; browse &middot; O order &middot; R reset</div>
+
+<script>
+/* =====================================================================
+   ePod digital signage
+   ---------------------------------------------------------------------
+   Talks to the ePod over its Wi-Fi AP. serve.py proxies /api/* to the
+   device so the browser never makes a cross-origin request; opening
+   index.html directly still works, it just falls back to demo keys.
+   ===================================================================== */
+const API   = '/api';        // proxied by serve.py
+const POLL  = 250;           // ms
+
+const S = { SLEEP:'sleep', WAKE:'wake', MENU:'menu' };
+let state    = S.SLEEP;
+let items    = [];
+let index    = 0;
+let lastSeq  = -1;
+let online   = false;
+let wakeTimer = null;
+
+const $ = id => document.getElementById(id);
+
+/* ---------- boot ---------- */
+/* The same content as menu.json, inline.
+   Opening this file directly (file://) blocks fetch(), so a page served that
+   way would build no cards at all and look like the images had failed. The
+   images themselves are plain <img src> and load fine either way - it was only
+   ever the menu that was missing. menu.json still wins when it can be read, so
+   editing it keeps working when the page is served by serve.py. */
+const MENU_FALLBACK = {
+  "restaurant": "ePod Kitchen",
+  "tagline": "Say \"next\" or \"back\" to browse  -  say \"hello world\" to order",
+  "items": [
+    { "image": "images/water fufu and eru.png",        "name": "Water Fufu & Eru",        "price": "2500", "note": "Steamed cassava with eru and smoked fish" },
+    { "image": "images/corn Fufu and vegitables.jpg",  "name": "Corn Fufu & Vegetables",  "price": "2000", "note": "Cornmeal fufu with garden huckleberry" },
+    { "image": "images/freid rice and chicken.jpg",    "name": "Fried Rice & Chicken",    "price": "3000", "note": "Wok rice, mixed vegetables, grilled chicken" },
+    { "image": "images/salvory noodles.png",           "name": "Savoury Noodles",         "price": "1800", "note": "Stir-fried noodles with peppers and herbs" },
+    { "image": "images/salad.jpg",                     "name": "Garden Salad",            "price": "1200", "note": "Crisp greens, tomato, avocado, house dressing" },
+    { "image": "images/Gemini_Generated_Image_9dvnr89dvnr89dvn.jpg", "name": "Chef's Special", "price": "3500", "note": "Ask your server for today's plate" }
+  ]
+};
+
+function applyMenu(cfg){
+  items = cfg.items || [];
+  $('brand').textContent   = cfg.restaurant || 'Menu';
+  $('tagline').textContent = cfg.tagline || '';
+  buildMenu();
+}
+fetch('menu.json')
+  .then(r => r.ok ? r.json() : Promise.reject())
+  .then(applyMenu)
+  .catch(() => applyMenu(MENU_FALLBACK));
+
+for (let i=0;i<5;i++){ const b=document.createElement('i');
+  b.style.animationDelay=(i*.13)+'s'; $('wave').appendChild(b); }
+
+/* ---------- screens ---------- */
+function show(next){
+  if (state === next) return;
+  state = next;
+  ['sleep','wake','menu'].forEach(id=>$(id).classList.toggle('on', id===next));
+  if (next === S.WAKE){
+    clearTimeout(wakeTimer);
+    // hold the welcome long enough to read it, then reveal the menu
+    wakeTimer = setTimeout(()=>show(S.MENU), 5200);
+  }
+  if (next === S.SLEEP){ index = 0; render(); }
+}
+
+/* ---------- menu ---------- */
+function buildMenu(){
+  const track = $('track'), dots = $('dots');
+  track.innerHTML = ''; dots.innerHTML = '';
+  items.forEach((it,i)=>{
+    const c = document.createElement('div');
+    c.className = 'card';
+    c.innerHTML =
+      `<img class="plate" src="${encodeURI(it.image)}" alt="${it.name}"
+            onerror="this.style.background='#2a2136'">
+       <div class="name">${it.name}</div>
+       <div class="note">${it.note||''}</div>
+       <div class="price">${it.price||''}<small>FCFA</small></div>`;
+    track.appendChild(c);
+    const d = document.createElement('i'); dots.appendChild(d);
+  });
+  render();
+}
+function render(){
+  const track = $('track');
+  track.style.transform = `translateX(${-index*100}%)`;
+  [...track.children].forEach((c,i)=>c.classList.toggle('active', i===index));
+  [...$('dots').children].forEach((d,i)=>d.classList.toggle('on', i===index));
+}
+function step(dir){
+  if (!items.length) return;
+  index = (index + dir + items.length) % items.length;
+  render();
+}
+
+/* ---------- order ---------- */
+let toastTimer = null;
+function order(){
+  if (state !== S.MENU || !items.length) return;
+  $('toastItem').textContent = items[index].name;
+  $('toast').classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>$('toast').classList.remove('on'), 3200);
+}
+
+/* ---------- idle blinking ---------- */
+setInterval(()=>{
+  const e = $('eyesWake');
+  if (!e.classList.contains('awake')) return;
+  e.classList.add('blink'); setTimeout(()=>e.classList.remove('blink'), 150);
+}, 4800);
+
+/* ---------- device link ---------- */
+function setStatus(ok, txt, vision, voice){
+  const s = $('status');
+  s.classList.toggle('live', ok);
+  $('statusText').textContent = txt;
+  $('tagVision').classList.toggle('act', !!vision);
+  $('tagVoice').classList.toggle('act', !!voice);
+}
+
+async function poll(){
+  try{
+    const r = await fetch(API + '/state', {cache:'no-store'});
+    if (!r.ok) throw 0;
+    const d = await r.json();
+    online = true;
+    autoStop(null);                       // real data wins over the demo loop
+    setStatus(true, 'connected', d.vision, d.voice);
+
+    // seq only changes when the device has something new to say
+    if (d.seq !== lastSeq){
+      const first = lastSeq === -1;
+      lastSeq = d.seq;
+      if (!first) handle(d.event);
+    }
+    if (d.person && state === S.SLEEP) show(S.WAKE);
+    if (!d.person && d.idle && state !== S.SLEEP) show(S.SLEEP);
+  }catch(e){
+    online = false;
+    if (autoOn) setStatus(false, 'demo loop', 0, 0);
+  }finally{
+    setTimeout(poll, POLL);
+  }
+}
+
+/* ---------- autoplay -------------------------------------------------------
+   Time ran out to wire the camera, so the page tells the whole story on its
+   own: it walks the same sequence the device would drive, on delays. The
+   moment a real ePod answers /api/state the loop stands down and the device
+   takes over, and any key press stops it too - so a judge asking "can I try
+   it?" is one keystroke away, with no reload.
+--------------------------------------------------------------------------- */
+const STORY = [
+  ['sleep',  4000],   // empty table, eyes closed
+  ['person', 5600],   // a guest sits down: eyes open, music, welcome
+  ['menu',   2600],   // menu appears (show() moves here on its own)
+  ['next',   2600],
+  ['next',   2600],
+  ['next',   3000],
+  ['order',  4200],   // "hello world" -> order placed
+  ['sleep',   800]    // table cleared, back to sleep
+];
+let autoOn = true, autoStep = 0, autoTimer = null;
+
+function autoTick(){
+  if (!autoOn) return;
+  const [what, hold] = STORY[autoStep % STORY.length];
+  autoStep++;
+  if (what === 'menu') show(S.MENU); else handle(what);
+  autoTimer = setTimeout(autoTick, hold);
+}
+function autoStop(why){
+  if (!autoOn) return;
+  autoOn = false;
+  clearTimeout(autoTimer);
+  if (why) setStatus(true, why, 0, 0);
+}
+function autoStart(){
+  if (autoOn) return;
+  autoOn = true; autoStep = 0;
+  show(S.SLEEP);
+  autoTick();
+}
+
+function handle(ev){
+  switch(ev){
+    case 'person': show(S.WAKE); break;
+    case 'next':   if (state===S.MENU) step(+1); break;
+    case 'prev':   if (state===S.MENU) step(-1); break;
+    case 'order':  order(); break;
+    case 'sleep':  show(S.SLEEP); break;
+  }
+}
+poll();
+autoTick();                               // start telling the story immediately
+
+/* ---------- demo keys: the whole flow works with no device ---------- */
+addEventListener('keydown', e=>{
+  if (e.key.toLowerCase() === 'd'){ autoOn ? autoStop('manual') : autoStart(); return; }
+  autoStop('manual');                     // any manual input pauses the loop
+  if (e.key === ' ')          { e.preventDefault(); show(state===S.SLEEP?S.WAKE:S.MENU); }
+  else if (e.key === 'ArrowRight') step(+1);
+  else if (e.key === 'ArrowLeft')  step(-1);
+  else if (e.key.toLowerCase() === 'o') order();
+  else if (e.key.toLowerCase() === 'r') { lastSeq=-1; show(S.SLEEP); }
+});
+/* touch swipe, handy when demoing on a tablet */
+let tx = null;
+addEventListener('touchstart', e=>tx = e.touches[0].clientX, {passive:true});
+addEventListener('touchend', e=>{
+  if (tx === null) return;
+  const dx = e.changedTouches[0].clientX - tx; tx = null;
+  if (Math.abs(dx) > 55){ autoStop('manual'); step(dx < 0 ? +1 : -1); }
+}, {passive:true});
+</script>
+</body>
+</html>

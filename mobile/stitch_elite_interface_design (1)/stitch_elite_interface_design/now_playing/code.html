@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>e-Pod - Now Playing</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "copper-hardware": "#B87333",
+                      "surface-bright": "#f8f9fa",
+                      "on-tertiary-fixed": "#2e1500",
+                      "surface": "#f8f9fa",
+                      "surface-container-low": "#f3f4f5",
+                      "surface-variant": "#e1e3e4",
+                      "error-container": "#ffdad6",
+                      "secondary-fixed-dim": "#b3c9e2",
+                      "on-primary-fixed-variant": "#005228",
+                      "primary-container": "#2ecc71",
+                      "inverse-primary": "#4ae183",
+                      "secondary-fixed": "#cfe5ff",
+                      "on-surface-variant": "#3d4a3e",
+                      "surface-dim": "#d9dadb",
+                      "surface-container": "#edeeef",
+                      "on-background": "#191c1d",
+                      "primary-fixed-dim": "#4ae183",
+                      "tertiary-fixed": "#ffdcc2",
+                      "recycled-slate": "#34495E",
+                      "on-secondary-fixed": "#051d30",
+                      "surface-container-lowest": "#ffffff",
+                      "lithium-grey": "#4A4A4A",
+                      "inverse-on-surface": "#f0f1f2",
+                      "tertiary-fixed-dim": "#ffb77b",
+                      "inverse-surface": "#2e3132",
+                      "tertiary": "#8c4f10",
+                      "on-secondary": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "circuit-green": "#2ECC71",
+                      "surface-container-highest": "#e1e3e4",
+                      "on-secondary-fixed-variant": "#34495e",
+                      "surface-container-high": "#e7e8e9",
+                      "tertiary-container": "#f0a25d",
+                      "surface-translucent": "rgba(248, 249, 250, 0.7)",
+                      "outline": "#6c7b6d",
+                      "on-tertiary": "#ffffff",
+                      "secondary": "#4b6076",
+                      "on-error-container": "#93000a",
+                      "on-primary-container": "#005027",
+                      "on-secondary-container": "#50657b",
+                      "primary": "#006d37",
+                      "on-error": "#ffffff",
+                      "secondary-container": "#cce2fc",
+                      "background": "#f8f9fa",
+                      "outline-variant": "#bbcbbb",
+                      "on-primary-fixed": "#00210c",
+                      "error": "#ba1a1a",
+                      "on-tertiary-container": "#6b3800",
+                      "on-tertiary-fixed-variant": "#6d3a00",
+                      "on-surface": "#191c1d",
+                      "primary-fixed": "#6bfe9c",
+                      "surface-tint": "#006d37"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "section-gap": "32px",
+                      "margin-desktop": "24px",
+                      "margin-mobile": "16px",
+                      "component-gap-md": "16px",
+                      "unit": "8px",
+                      "gutter": "16px",
+                      "component-gap-xs": "4px",
+                      "component-gap-sm": "8px"
+              },
+              "fontFamily": {
+                      "headline-lg": [
+                              "Hanken Grotesk"
+                      ],
+                      "headline-lg-mobile": [
+                              "Hanken Grotesk"
+                      ],
+                      "body-md": [
+                              "Hanken Grotesk"
+                      ],
+                      "headline-md": [
+                              "Hanken Grotesk"
+                      ],
+                      "label-sm-mono": [
+                              "JetBrains Mono"
+                      ],
+                      "body-lg": [
+                              "Hanken Grotesk"
+                      ],
+                      "label-mono": [
+                              "JetBrains Mono"
+                      ]
+              },
+              "fontSize": {
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-sm-mono": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-mono": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "500"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        /* Base rPETG Texture */
+        body {
+            background-color: #f8f9fa;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+        }
+
+        /* Hardware Accent Line */
+        .hardware-accent {
+            background: linear-gradient(90deg, transparent, #B87333, transparent);
+            background-size: 200% 100%;
+            animation: pulse-copper 3s infinite linear;
+        }
+
+        @keyframes pulse-copper {
+            0% { background-position: 100% 0; }
+            100% { background-position: -100% 0; }
+        }
+
+        /* Custom Slider */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px;
+            width: 8px;
+            border-radius: 2px;
+            background: #2ECC71;
+            cursor: pointer;
+            margin-top: -10px;
+            border: 1px solid #191c1d;
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #e1e3e4;
+            border-radius: 2px;
+            border: 1px solid #d9dadb;
+        }
+        
+        .fill-track {
+             position: absolute;
+             height: 4px;
+             background: #2ECC71;
+             background-image: radial-gradient(circle, rgba(0,0,0,0.1) 1px, transparent 1px);
+             background-size: 4px 4px;
+             border-radius: 2px;
+             pointer-events: none;
+             top: 50%;
+             transform: translateY(-50%);
+             z-index: 0;
+        }
+        
+        .slider-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .slider-container input {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="text-on-background flex flex-col min-h-screen">
+<!-- TopAppBar -->
+<header class="bg-surface-translucent dark:bg-surface-translucent backdrop-blur-md fixed top-0 w-full z-50 border-b border-outline-variant/30 flex justify-between items-center px-margin-mobile h-16 w-full flat no shadows">
+<button class="text-circuit-green dark:text-primary-fixed-dim hover:opacity-80 transition-opacity Active: scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings_input_component</span>
+</button>
+<h1 class="font-headline-md text-headline-md tracking-tight text-on-surface dark:text-inverse-on-surface">e-Pod</h1>
+<button class="text-on-surface-variant hover:opacity-80 transition-opacity Active: scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">sensors</span>
+</button>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 pt-24 pb-32 px-margin-mobile flex flex-col max-w-2xl mx-auto w-full md:px-margin-desktop md:grid md:grid-cols-2 md:gap-section-gap md:items-center">
+<!-- Track Info Card (Visualizer Focus) -->
+<section class="flex flex-col gap-component-gap-md w-full relative z-10 md:order-1">
+<div class="bg-surface-container-lowest/80 backdrop-blur-xl border border-surface-variant rounded-xl p-6 flex flex-col items-center justify-center min-h-[320px] shadow-sm relative overflow-hidden group">
+<!-- Simulated Visualizer (CSS driven for lightness) -->
+<div class="absolute inset-0 opacity-10 pointer-events-none flex items-end justify-center gap-1 pb-4">
+<div class="w-2 bg-circuit-green h-1/4 animate-[bounce_1s_infinite_ease-in-out_alternate]"></div>
+<div class="w-2 bg-circuit-green h-1/2 animate-[bounce_1.2s_infinite_ease-in-out_alternate]"></div>
+<div class="w-2 bg-circuit-green h-3/4 animate-[bounce_0.8s_infinite_ease-in-out_alternate]"></div>
+<div class="w-2 bg-circuit-green h-2/3 animate-[bounce_1.5s_infinite_ease-in-out_alternate]"></div>
+<div class="w-2 bg-circuit-green h-1/3 animate-[bounce_0.9s_infinite_ease-in-out_alternate]"></div>
+<div class="w-2 bg-circuit-green h-1/2 animate-[bounce_1.1s_infinite_ease-in-out_alternate]"></div>
+<div class="w-2 bg-circuit-green h-1/4 animate-[bounce_1.3s_infinite_ease-in-out_alternate]"></div>
+</div>
+<div class="text-center z-10">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-on-surface mb-2">Neon Nights</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Synthwave Collective</p>
+</div>
+<div class="hardware-accent absolute bottom-0 left-0 w-full h-[2px]"></div>
+</div>
+</section>
+<!-- Controls & Telemetry -->
+<section class="flex flex-col gap-section-gap mt-section-gap md:mt-0 w-full md:order-2">
+<!-- Playback Controls -->
+<div class="flex items-center justify-center gap-component-gap-md">
+<button class="w-12 h-12 flex items-center justify-center rounded border border-recycled-slate text-recycled-slate hover:bg-surface-variant/50 transition-colors active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">skip_previous</span>
+</button>
+<button class="w-16 h-16 flex items-center justify-center rounded-xl bg-circuit-green text-on-primary hover:opacity-90 transition-opacity shadow-sm active:scale-95 relative overflow-hidden group">
+<span class="material-symbols-outlined !text-4xl z-10" style="font-variation-settings: 'FILL' 1;">pause</span>
+<div class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity z-0"></div>
+</button>
+<button class="w-12 h-12 flex items-center justify-center rounded border border-recycled-slate text-recycled-slate hover:bg-surface-variant/50 transition-colors active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">skip_next</span>
+</button>
+</div>
+<!-- Volume & Progress -->
+<div class="flex flex-col gap-component-gap-md bg-surface-container-low p-4 rounded-lg border border-surface-variant">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">volume_down</span>
+<div class="slider-container flex-1">
+<div class="fill-track" style="width: 65%;"></div>
+<input class="w-full" max="100" min="0" type="range" value="65"/>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-sm">volume_up</span>
+</div>
+<div class="flex justify-between items-center mt-2">
+<span class="font-label-sm-mono text-label-sm-mono text-recycled-slate">01:24</span>
+<span class="font-label-sm-mono text-label-sm-mono text-recycled-slate">-03:12</span>
+</div>
+</div>
+<!-- Telemetry Chips -->
+<div class="flex flex-wrap justify-center gap-2">
+<div class="flex items-center gap-1 px-3 py-1 bg-surface-variant rounded-full border border-surface-dim">
+<span class="material-symbols-outlined text-[16px] text-circuit-green">battery_charging_full</span>
+<span class="font-label-sm-mono text-label-sm-mono text-on-surface">BAT: 85%</span>
+</div>
+<div class="flex items-center gap-1 px-3 py-1 bg-surface-variant rounded-full border border-surface-dim">
+<span class="material-symbols-outlined text-[16px] text-recycled-slate">sd_card</span>
+<span class="font-label-sm-mono text-label-sm-mono text-on-surface">SD01_ACTIVE</span>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="bg-surface-translucent dark:bg-surface-translucent backdrop-blur-lg fixed bottom-0 w-full z-50 rounded-t-xl border-t border-outline-variant/30 flat no shadows flex justify-around items-center h-20 px-2 pb-safe w-full md:hidden">
+<button class="flex flex-col items-center justify-center text-on-secondary-fixed-variant dark:text-secondary-fixed-dim opacity-70 hover:bg-surface-variant/50 transition-colors w-16 h-16 rounded-xl">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">radar</span>
+<span class="font-label-mono text-label-mono text-[10px]">Scan</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-primary-container/20 dark:bg-primary-container/10 text-on-primary-container dark:text-primary-fixed-dim rounded-xl px-3 py-1 hover:bg-surface-variant/50 transition-colors Active: scale-90 transition-all duration-200 ease-out w-16 h-16">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">graphic_eq</span>
+<span class="font-label-mono text-label-mono text-[10px] font-bold">Playing</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-secondary-fixed-variant dark:text-secondary-fixed-dim opacity-70 hover:bg-surface-variant/50 transition-colors w-16 h-16 rounded-xl">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">folder_shared</span>
+<span class="font-label-mono text-label-mono text-[10px]">Library</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-secondary-fixed-variant dark:text-secondary-fixed-dim opacity-70 hover:bg-surface-variant/50 transition-colors w-16 h-16 rounded-xl">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">battery_charging_full</span>
+<span class="font-label-mono text-label-mono text-[10px]">Status</span>
+</button>
+</nav>
+<script>
+        // Simple script to update the custom slider fill
+        const sliders = document.querySelectorAll('input[type="range"]');
+        sliders.forEach(slider => {
+            slider.addEventListener('input', (e) => {
+                const container = e.target.parentElement;
+                const fill = container.querySelector('.fill-track');
+                if(fill) {
+                    fill.style.width = e.target.value + '%';
+                }
+            });
+        });
+    </script>
+</body></html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>e-Pod - Library</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "lithium-grey": "#4A4A4A",
+                "surface-dim": "#d9dadb",
+                "circuit-green": "#2ECC71",
+                "on-primary-container": "#005027",
+                "inverse-surface": "#2e3132",
+                "inverse-primary": "#4ae183",
+                "tertiary-container": "#f0a25d",
+                "on-secondary-fixed-variant": "#34495e",
+                "surface-container-low": "#f3f4f5",
+                "recycled-slate": "#34495E",
+                "tertiary-fixed": "#ffdcc2",
+                "secondary": "#4b6076",
+                "surface-container-lowest": "#ffffff",
+                "surface-container": "#edeeef",
+                "on-primary": "#ffffff",
+                "on-secondary-fixed": "#051d30",
+                "primary": "#4a5d4e",
+                "outline-variant": "#bbcbbb",
+                "surface-translucent": "rgba(248, 249, 250, 0.7)",
+                "secondary-container": "#cce2fc",
+                "surface-variant": "#e1e3e4",
+                "primary-fixed": "#6bfe9c",
+                "on-primary-fixed-variant": "#005228",
+                "primary-container": "#d0e3d2",
+                "tertiary-fixed-dim": "#ffb77b",
+                "outline": "#6c7b6d",
+                "tertiary": "#8c4f10",
+                "inverse-on-surface": "#f0f1f2",
+                "surface-tint": "#4a5d4e",
+                "surface-container-highest": "#e1e3e4",
+                "on-surface-variant": "#3d4a3e",
+                "primary-fixed-dim": "#4ae183",
+                "surface-container-high": "#e7e8e9",
+                "on-primary-fixed": "#00210c",
+                "on-error": "#ffffff",
+                "on-error-container": "#93000a",
+                "secondary-fixed-dim": "#b3c9e2",
+                "error": "#ba1a1a",
+                "on-tertiary-container": "#6b3800",
+                "background": "#faf9f6",
+                "on-tertiary-fixed": "#2e1500",
+                "error-container": "#ffdad6",
+                "copper-hardware": "#B87333",
+                "on-surface": "#1a1c1a",
+                "on-secondary": "#ffffff",
+                "secondary-fixed": "#cfe5ff",
+                "on-tertiary": "#ffffff",
+                "on-background": "#1a1c1a",
+                "surface": "#faf9f6",
+                "surface-bright": "#faf9f6",
+                "on-secondary-container": "#50657b",
+                "on-tertiary-fixed-variant": "#6d3a00"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "margin-desktop": "24px",
+                "component-gap-md": "16px",
+                "margin-mobile": "16px",
+                "section-gap": "32px",
+                "component-gap-sm": "8px",
+                "component-gap-xs": "4px",
+                "gutter": "16px",
+                "unit": "8px"
+        },
+        "fontFamily": {
+                "label-mono": [
+                        "JetBrains Mono"
+                ],
+                "headline-md": [
+                        "Hanken Grotesk"
+                ],
+                "headline-lg-mobile": [
+                        "Hanken Grotesk"
+                ],
+                "headline-lg": [
+                        "Hanken Grotesk"
+                ],
+                "label-sm-mono": [
+                        "JetBrains Mono"
+                ],
+                "body-lg": [
+                        "Hanken Grotesk"
+                ],
+                "body-md": [
+                        "Hanken Grotesk"
+                ]
+        },
+        "fontSize": {
+                "label-mono": [
+                        "14px",
+                        {
+                                "lineHeight": "20px",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "500"
+                        }
+                ],
+                "headline-md": [
+                        "24px",
+                        {
+                                "lineHeight": "32px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "headline-lg-mobile": [
+                        "28px",
+                        {
+                                "lineHeight": "36px",
+                                "fontWeight": "700"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "40px",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "700"
+                        }
+                ],
+                "label-sm-mono": [
+                        "12px",
+                        {
+                                "lineHeight": "16px",
+                                "fontWeight": "500"
+                        }
+                ],
+                "body-lg": [
+                        "18px",
+                        {
+                                "lineHeight": "28px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "24px",
+                                "fontWeight": "400"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+        .progress-stripe {
+            background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+            background-size: 1rem 1rem;
+            animation: progress-move 1s linear infinite;
+        }
+        @keyframes progress-move {
+            0% { background-position: 1rem 0; }
+            100% { background-position: 0 0; }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface-translucent dark:bg-surface-translucent backdrop-blur-md border-b border-outline-variant/30 flex justify-between items-center px-margin-mobile h-16 w-full">
+<button class="text-primary hover:opacity-80 transition-opacity active:scale-95 duration-150">
+<span class="material-symbols-outlined" data-icon="settings_input_component">settings_input_component</span>
+</button>
+<h1 class="font-headline-md text-headline-md tracking-tight text-on-surface font-headline-lg-mobile text-headline-lg-mobile">e-Pod</h1>
+<button class="text-primary hover:opacity-80 transition-opacity active:scale-95 duration-150">
+<span class="material-symbols-outlined" data-icon="sensors">sensors</span>
+</button>
+</header>
+<main class="pt-24 px-margin-mobile max-w-4xl mx-auto space-y-section-gap">
+<!-- Upload Section -->
+<section class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-6 shadow-sm">
+<div class="flex flex-col md:flex-row items-center justify-between gap-component-gap-md">
+<div>
+<h2 class="font-headline-md text-headline-md mb-2">Pick a Track to Upload</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Select high-quality audio files for transfer to internal SD storage.</p>
+</div>
+<button class="bg-primary text-on-primary font-label-mono text-label-mono px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-opacity-90 transition-colors w-full md:w-auto justify-center">
+<span class="material-symbols-outlined" data-icon="upload_file">upload_file</span>
+                    Add Music
+                </button>
+</div>
+<!-- Active Transfer Status (Mocked) -->
+<div class="mt-8 border-t border-outline-variant/30 pt-6">
+<div class="flex justify-between items-end mb-2">
+<div>
+<span class="font-label-sm-mono text-label-sm-mono text-primary uppercase tracking-wider block mb-1">Transfer Active</span>
+<h3 class="font-body-lg text-body-lg font-semibold truncate max-w-[200px] md:max-w-md">01_Atmospheric_Entry.flac</h3>
+</div>
+<div class="text-right">
+<span class="font-label-sm-mono text-label-sm-mono text-on-surface-variant block">4.2 MB/s</span>
+<span class="font-label-sm-mono text-label-sm-mono text-on-surface-variant block">~12s remaining</span>
+</div>
+</div>
+<div class="h-3 w-full bg-surface-variant rounded-full overflow-hidden relative">
+<div class="h-full bg-primary progress-stripe" style="width: 65%;"></div>
+</div>
+<p class="text-center font-label-sm-mono text-label-sm-mono text-on-surface-variant mt-2">Syncing to e-Pod...</p>
+</div>
+</section>
+<!-- Library List -->
+<section>
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-headline-md text-headline-md flex items-center gap-2">
+<span class="material-symbols-outlined text-outline" data-icon="sd_card">sd_card</span>
+                    SD Card Content
+                </h2>
+<span class="bg-surface-variant px-3 py-1 rounded-full font-label-sm-mono text-label-sm-mono text-on-surface-variant">14 Tracks</span>
+</div>
+<div class="space-y-3">
+<!-- Track Item -->
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-lg p-4 flex items-center justify-between hover:bg-surface-container transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 bg-surface-variant rounded-md flex items-center justify-center text-on-surface-variant group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="music_note">music_note</span>
+</div>
+<div>
+<p class="font-body-md text-body-md font-semibold">Neon Horizon.wav</p>
+<p class="font-label-sm-mono text-label-sm-mono text-on-surface-variant">42.1 MB • 16-bit / 44.1kHz</p>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-error transition-colors p-2">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+</div>
+<!-- Track Item -->
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-lg p-4 flex items-center justify-between hover:bg-surface-container transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 bg-surface-variant rounded-md flex items-center justify-center text-on-surface-variant group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="music_note">music_note</span>
+</div>
+<div>
+<p class="font-body-md text-body-md font-semibold">Data_Stream_Alpha.flac</p>
+<p class="font-label-sm-mono text-label-sm-mono text-on-surface-variant">105.4 MB • 24-bit / 96kHz</p>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-error transition-colors p-2">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+</div>
+<!-- Track Item -->
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-lg p-4 flex items-center justify-between hover:bg-surface-container transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 bg-surface-variant rounded-md flex items-center justify-center text-on-surface-variant group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="music_note">music_note</span>
+</div>
+<div>
+<p class="font-body-md text-body-md font-semibold">Subterranean_Echo.mp3</p>
+<p class="font-label-sm-mono text-label-sm-mono text-on-surface-variant">8.2 MB • 320kbps</p>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-error transition-colors p-2">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-xl bg-surface-container-low border-t border-outline-variant/30 flex justify-around items-center h-20 px-2 pb-safe w-full md:hidden">
+<button class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:bg-surface-variant/50 transition-colors w-16 h-14 rounded-xl">
+<span class="material-symbols-outlined mb-1" data-icon="radar">radar</span>
+<span class="font-label-mono text-label-mono text-[10px]">Scan</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:bg-surface-variant/50 transition-colors w-16 h-14 rounded-xl">
+<span class="material-symbols-outlined mb-1" data-icon="graphic_eq">graphic_eq</span>
+<span class="font-label-mono text-label-mono text-[10px]">Playing</span>
+</button>
+<!-- Active State for Library -->
+<button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-3 py-1 w-16 h-14 hover:bg-surface-variant/50 transition-colors active:scale-90 duration-200 ease-out">
+<span class="material-symbols-outlined mb-1 text-primary" data-icon="folder_shared" style="font-variation-settings: 'FILL' 1;">folder_shared</span>
+<span class="font-label-mono text-label-mono text-[10px] text-primary">Library</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:bg-surface-variant/50 transition-colors w-16 h-14 rounded-xl">
+<span class="material-symbols-outlined mb-1" data-icon="battery_charging_full">battery_charging_full</span>
+<span class="font-label-mono text-label-mono text-[10px]">Status</span>
+</button>
+</nav>
+<!-- Desktop Side Nav (Visible only on md+) -->
+<nav class="hidden md:flex flex-col fixed left-0 top-16 bottom-0 w-24 bg-surface border-r border-outline-variant/30 pt-8 items-center space-y-8 z-40">
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors group">
+<span class="material-symbols-outlined mb-1" data-icon="radar">radar</span>
+<span class="font-label-mono text-label-mono text-[10px]">Scan</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors group">
+<span class="material-symbols-outlined mb-1" data-icon="graphic_eq">graphic_eq</span>
+<span class="font-label-mono text-label-mono text-[10px]">Playing</span>
+</button>
+<button class="flex flex-col items-center justify-center text-primary group">
+<span class="material-symbols-outlined mb-1" data-icon="folder_shared" style="font-variation-settings: 'FILL' 1;">folder_shared</span>
+<span class="font-label-mono text-label-mono text-[10px]">Library</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors group">
+<span class="material-symbols-outlined mb-1" data-icon="battery_charging_full">battery_charging_full</span>
+<span class="font-label-mono text-label-mono text-[10px]">Status</span>
+</button>
+</nav>
+</body></html>

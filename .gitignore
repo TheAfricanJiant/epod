@@ -1,0 +1,26 @@
+# PlatformIO
+.pio/
+.pioenvs/
+.piolibdeps/
+firmware/*/.vscode/
+
+# Android / Gradle
+build/
+.gradle/
+local.properties
+*.apk
+*.aab
+*.keystore
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc

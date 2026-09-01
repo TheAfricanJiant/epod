@@ -1,0 +1,3 @@
+# Keep line endings as they are. The Edge Impulse SDK is thousands of vendored
+# files; letting git rewrite them creates enormous, meaningless diffs.
+* -text

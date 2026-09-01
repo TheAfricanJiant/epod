@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>e-Pod - Scan</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "copper-hardware": "#B87333",
+                      "surface-bright": "#f8f9fa",
+                      "on-tertiary-fixed": "#2e1500",
+                      "surface": "#f8f9fa",
+                      "surface-container-low": "#f3f4f5",
+                      "surface-variant": "#e1e3e4",
+                      "error-container": "#ffdad6",
+                      "secondary-fixed-dim": "#b3c9e2",
+                      "on-primary-fixed-variant": "#005228",
+                      "primary-container": "#2ecc71",
+                      "inverse-primary": "#4ae183",
+                      "secondary-fixed": "#cfe5ff",
+                      "on-surface-variant": "#3d4a3e",
+                      "surface-dim": "#d9dadb",
+                      "surface-container": "#edeeef",
+                      "on-background": "#191c1d",
+                      "primary-fixed-dim": "#4ae183",
+                      "tertiary-fixed": "#ffdcc2",
+                      "recycled-slate": "#34495E",
+                      "on-secondary-fixed": "#051d30",
+                      "surface-container-lowest": "#ffffff",
+                      "lithium-grey": "#4A4A4A",
+                      "inverse-on-surface": "#f0f1f2",
+                      "tertiary-fixed-dim": "#ffb77b",
+                      "inverse-surface": "#2e3132",
+                      "tertiary": "#8c4f10",
+                      "on-secondary": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "circuit-green": "#2ECC71",
+                      "surface-container-highest": "#e1e3e4",
+                      "on-secondary-fixed-variant": "#34495e",
+                      "surface-container-high": "#e7e8e9",
+                      "tertiary-container": "#f0a25d",
+                      "surface-translucent": "rgba(248, 249, 250, 0.7)",
+                      "outline": "#6c7b6d",
+                      "on-tertiary": "#ffffff",
+                      "secondary": "#4b6076",
+                      "on-error-container": "#93000a",
+                      "on-primary-container": "#005027",
+                      "on-secondary-container": "#50657b",
+                      "primary": "#006d37",
+                      "on-error": "#ffffff",
+                      "secondary-container": "#cce2fc",
+                      "background": "#f8f9fa",
+                      "outline-variant": "#bbcbbb",
+                      "on-primary-fixed": "#00210c",
+                      "error": "#ba1a1a",
+                      "on-tertiary-container": "#6b3800",
+                      "on-tertiary-fixed-variant": "#6d3a00",
+                      "on-surface": "#191c1d",
+                      "primary-fixed": "#6bfe9c",
+                      "surface-tint": "#006d37"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "section-gap": "32px",
+                      "margin-desktop": "24px",
+                      "margin-mobile": "16px",
+                      "component-gap-md": "16px",
+                      "unit": "8px",
+                      "gutter": "16px",
+                      "component-gap-xs": "4px",
+                      "component-gap-sm": "8px"
+              },
+              "fontFamily": {
+                      "headline-lg": [
+                              "Hanken Grotesk"
+                      ],
+                      "headline-lg-mobile": [
+                              "Hanken Grotesk"
+                      ],
+                      "body-md": [
+                              "Hanken Grotesk"
+                      ],
+                      "headline-md": [
+                              "Hanken Grotesk"
+                      ],
+                      "label-sm-mono": [
+                              "JetBrains Mono"
+                      ],
+                      "body-lg": [
+                              "Hanken Grotesk"
+                      ],
+                      "label-mono": [
+                              "JetBrains Mono"
+                      ]
+              },
+              "fontSize": {
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-sm-mono": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-mono": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "500"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            color: theme('colors.on-background');
+        }
+        
+        .radar-sweep {
+            animation: sweep 3s linear infinite;
+        }
+        
+        @keyframes sweep {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .pulse-ring {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid theme('colors.surface-variant');
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="antialiased min-h-screen flex flex-col pt-16 pb-24 md:pb-0">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface-translucent backdrop-blur-md border-b border-outline-variant/30 flex justify-between items-center px-margin-mobile h-16 w-full md:px-margin-desktop">
+<button class="hover:opacity-80 transition-opacity flex items-center justify-center p-2 rounded-full text-on-surface-variant active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined" data-icon="settings_input_component">settings_input_component</span>
+</button>
+<h1 class="font-headline-md text-headline-md tracking-tight text-on-surface">e-Pod</h1>
+<button class="hover:opacity-80 transition-opacity flex items-center justify-center p-2 rounded-full text-on-surface-variant active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined" data-icon="sensors">sensors</span>
+</button>
+</header>
+<main class="flex-grow flex flex-col md:max-w-3xl md:mx-auto w-full px-margin-mobile md:px-margin-desktop py-section-gap gap-section-gap relative z-10">
+<!-- Status Indicator -->
+<div class="flex flex-col items-center justify-center gap-unit text-center">
+<span class="font-label-mono text-label-mono text-circuit-green uppercase tracking-widest animate-pulse">Searching for e-Pod...</span>
+<p class="font-body-md text-body-md text-on-surface-variant">Ensure your device is powered on and in pairing mode.</p>
+</div>
+<!-- Radar Animation Area -->
+<div class="relative w-full aspect-square max-w-sm mx-auto flex items-center justify-center my-section-gap">
+<!-- Background Rings -->
+<div class="absolute inset-0 rounded-full border border-surface-variant/50"></div>
+<div class="absolute inset-[15%] rounded-full border border-surface-variant/70"></div>
+<div class="absolute inset-[30%] rounded-full border border-surface-variant"></div>
+<!-- Pulsing Center -->
+<div class="absolute w-12 h-12 bg-circuit-green/20 rounded-full pulse-ring"></div>
+<div class="absolute w-6 h-6 bg-circuit-green rounded-full shadow-[0_0_15px_rgba(46,204,113,0.5)] z-10"></div>
+<!-- Sweeping Line -->
+<div class="absolute inset-0 rounded-full overflow-hidden radar-sweep">
+<div class="absolute top-1/2 left-1/2 w-1/2 h-1/2 bg-gradient-to-br from-circuit-green/40 to-transparent origin-top-left"></div>
+<div class="absolute top-1/2 left-1/2 w-1/2 h-[2px] bg-circuit-green origin-left"></div>
+</div>
+<!-- Decorative Blips (Simulated devices) -->
+<div class="absolute top-[25%] left-[60%] w-2 h-2 bg-circuit-green rounded-full shadow-[0_0_5px_rgba(46,204,113,0.8)] opacity-70"></div>
+<div class="absolute bottom-[30%] left-[20%] w-1.5 h-1.5 bg-circuit-green rounded-full shadow-[0_0_5px_rgba(46,204,113,0.8)] opacity-40"></div>
+</div>
+<!-- Discovered Devices List -->
+<div class="flex flex-col gap-component-gap-md w-full">
+<h2 class="font-label-sm-mono text-label-sm-mono text-on-surface-variant uppercase tracking-wider mb-2">Discovered Devices (2)</h2>
+<!-- Device Card 1 -->
+<div class="glass-panel rounded-xl p-4 flex items-center justify-between gap-4 transition-all hover:bg-surface-bright/50">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="speaker">speaker</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md text-on-surface leading-tight">e-Pod Mk.II</span>
+<div class="flex items-center gap-2 mt-1">
+<span class="w-2 h-2 rounded-full bg-circuit-green"></span>
+<span class="font-label-sm-mono text-label-sm-mono text-on-surface-variant">RSSI: -45dBm (Strong)</span>
+</div>
+</div>
+</div>
+<button class="bg-circuit-green text-on-primary font-label-mono text-label-mono px-4 py-2 rounded-lg hover:bg-opacity-90 active:scale-95 transition-all">
+                    Connect
+                </button>
+</div>
+<!-- Device Card 2 -->
+<div class="glass-panel rounded-xl p-4 flex items-center justify-between gap-4 transition-all hover:bg-surface-bright/50 opacity-70">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="developer_board">developer_board</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md text-on-surface leading-tight">e-Pod Proto-01</span>
+<div class="flex items-center gap-2 mt-1">
+<span class="w-2 h-2 rounded-full bg-tertiary-container"></span>
+<span class="font-label-sm-mono text-label-sm-mono text-on-surface-variant">RSSI: -82dBm (Weak)</span>
+</div>
+</div>
+</div>
+<button class="border border-recycled-slate text-recycled-slate font-label-mono text-label-mono px-4 py-2 rounded-lg hover:bg-surface-variant/30 active:scale-95 transition-all">
+                    Connect
+                </button>
+</div>
+<div class="text-center mt-4">
+<a class="font-label-sm-mono text-label-sm-mono text-on-surface-variant underline hover:text-circuit-green transition-colors" href="#">Enter manual IP address instead</a>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 rounded-t-xl bg-surface-translucent backdrop-blur-lg border-t border-outline-variant/30 flex justify-around items-center h-20 px-2 pb-safe w-full">
+<!-- Scan (Active) -->
+<a class="flex flex-col items-center justify-center bg-primary-container/20 text-on-primary-container rounded-xl px-3 py-1 hover:bg-surface-variant/50 transition-colors active:scale-90 transition-all duration-200 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="radar" style="font-variation-settings: 'FILL' 1;">radar</span>
+<span class="font-label-mono text-label-mono mt-1">Scan</span>
+</a>
+<!-- Playing (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-secondary-fixed-variant opacity-70 hover:bg-surface-variant/50 transition-colors active:scale-90 transition-all duration-200 ease-out p-2 rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="graphic_eq">graphic_eq</span>
+<span class="font-label-mono text-label-mono mt-1">Playing</span>
+</a>
+<!-- Library (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-secondary-fixed-variant opacity-70 hover:bg-surface-variant/50 transition-colors active:scale-90 transition-all duration-200 ease-out p-2 rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="folder_shared">folder_shared</span>
+<span class="font-label-mono text-label-mono mt-1">Library</span>
+</a>
+<!-- Status (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-secondary-fixed-variant opacity-70 hover:bg-surface-variant/50 transition-colors active:scale-90 transition-all duration-200 ease-out p-2 rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="battery_charging_full">battery_charging_full</span>
+<span class="font-label-mono text-label-mono mt-1">Status</span>
+</a>
+</nav>
+<!-- Desktop Navigation Cluster (Hidden on Mobile) -->
+<div class="hidden md:flex fixed top-0 right-margin-desktop h-16 items-center gap-6 z-50">
+<a class="text-circuit-green font-label-mono text-label-mono hover:opacity-80 transition-opacity flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="radar" style="font-variation-settings: 'FILL' 1;">radar</span> Scan
+        </a>
+<a class="text-on-surface-variant font-label-mono text-label-mono hover:opacity-80 transition-opacity flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="graphic_eq">graphic_eq</span> Playing
+        </a>
+<a class="text-on-surface-variant font-label-mono text-label-mono hover:opacity-80 transition-opacity flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="folder_shared">folder_shared</span> Library
+        </a>
+<a class="text-on-surface-variant font-label-mono text-label-mono hover:opacity-80 transition-opacity flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="battery_charging_full">battery_charging_full</span> Status
+        </a>
+</div>
+</body></html>
