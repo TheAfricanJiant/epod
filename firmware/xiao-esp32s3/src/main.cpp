@@ -10,7 +10,7 @@
 //         +------------------ END received (or timeout) ---------------+
 //
 //  CLOSING exists because a stream cannot be abandoned mid-flight. The end
-//  marker has to be sent and the WROVER has to confirm it is back in text mode
+//  marker has to be sent and the WROOM has to confirm it is back in text mode
 //  before any command can be sent, or the next command is decoded as audio.
 //  Every transition - a button, the end of a track, a console command - goes
 //  through the same three functions, so there is one path in and one path out.
@@ -47,12 +47,12 @@ static inline void crumbSet(const char* where) {
 }
 
 // ----------------------------------------------------------------- link ----
-#define TX1_PIN    43   // to WROVER RX2 (GPIO 27)
-#define RX1_PIN    44   // from WROVER TX2 (GPIO 32)
+#define TX1_PIN    43   // to WROOM RX2 (GPIO 27)
+#define RX1_PIN    44   // from WROOM TX2 (GPIO 32)
 #define UART_BAUD  460800
 
 // ---------------------------------------------------------------- audio ----
-#define STREAM_RATE      22050        // must match AUDIO_RATE on the WROVER
+#define STREAM_RATE      22050        // must match AUDIO_RATE on the WROOM
 #define STREAM_END_RUN   32
 #define PUMP_INTERVAL_US 2000
 #define PUMP_MAX_BURST   1024
@@ -72,7 +72,7 @@ static const int SD_CS_CANDIDATES[] = {21, 3, 2, 4};
 // the audio.
 #define SD_POLL_MS 1000
 
-// The WROVER shows four rows at a time and owns no playlist, so only the
+// The WROOM shows four rows at a time and owns no playlist, so only the
 // visible window is ever sent.
 #define LIST_ROWS     4
 
@@ -101,7 +101,7 @@ static const int SD_CS_CANDIDATES[] = {21, 3, 2, 4};
 #define FILE_BUF_SIZE 4096
 
 // ------------------------------------------------------- flow control -----
-// The WROVER reports its total backlog (jitter ring plus UART buffer, ~24 KB
+// The WROOM reports its total backlog (jitter ring plus UART buffer, ~24 KB
 // of capacity) every 50 ms. The target is deep on purpose - about 280 ms.
 // Reading the next block off the card stalls this loop for tens of
 // milliseconds and a shallow buffer turns every one into an audible dropout.
@@ -196,7 +196,7 @@ Request request = REQ_NONE;
 int requestIndex = 0;
 bool endReceived = false;
 
-// What to do once the WROVER confirms the stream is closed.
+// What to do once the WROOM confirms the stream is closed.
 enum NextAction { NEXT_NONE, NEXT_PLAY, NEXT_STOP };
 NextAction nextAction = NEXT_NONE;
 int nextTrack = 0;
@@ -210,9 +210,9 @@ uint32_t sentBytes = 0;
 
 uint64_t creditFx = 0;                // 16.16 bytes owed to the receiver
 uint32_t lastPumpUs = 0;
-uint32_t wroverLevel = 0;
-uint32_t wroverDry = 0;
-uint32_t wroverGap = 0;               // silence forced into the music
+uint32_t wroomLevel = 0;
+uint32_t wroomDry = 0;
+uint32_t wroomGap = 0;               // silence forced into the music
 unsigned long lastBufMs = 0;
 unsigned long lastHealthMs = 0;
 unsigned long stalledSince = 0;
@@ -230,8 +230,8 @@ unsigned long lastSdPoll = 0;
 // heap, and a fragmented heap is a slow-motion crash.
 char pcLine[80];
 uint8_t pcLen = 0;
-char wroverLine[160];
-uint8_t wroverLen = 0;
+char wroomLine[160];
+uint8_t wroomLen = 0;
 
 // ----------------------------------------------------------- prototypes ---
 bool mountSd();
@@ -249,7 +249,7 @@ void sendTrackInfo();
 void sendLibraryInfo();
 void sendListWindow();
 void showStopped();
-void sendSettingsToWrover();
+void sendSettingsToWroom();
 void play(int index);
 void stop();
 void skip(int delta);
@@ -262,8 +262,8 @@ uint32_t currentRate();
 void handlePcInput();
 void handleCommandLine(char* line, bool fromApp);
 void doRescan();
-void handleWroverInput();
-void handleWroverLine(const char* line);
+void handleWroomInput();
+void handleWroomLine(const char* line);
 void onButton(const char* button);
 void applyRequest();
 void requestPlay(int index);
@@ -759,18 +759,18 @@ void serviceSd() {
 // ============================================================================
 //  Display helpers
 // ============================================================================
-// True while the S3->WROVER direction is carrying raw audio rather than text.
+// True while the S3->WROOM direction is carrying raw audio rather than text.
 static bool linkCarriesPcm() {
   return state == PS_PLAYING || state == PS_CLOSING;
 }
 
-// Everything the player says goes to the WROVER, and the wireless layer picks
+// Everything the player says goes to the WROOM, and the wireless layer picks
 // out the lines the app understands.
 //
 // The guard matters now that commands can arrive from a phone at any moment:
 // during playback the link is a raw byte pipe, and a stray line of text would
 // be played as noise and then have the audio parsed back as commands. The app
-// still gets its telemetry either way - only the wire to the WROVER goes
+// still gets its telemetry either way - only the wire to the WROOM goes
 // quiet.
 void sendCommand(const char* command) {
   if (!linkCarriesPcm()) Serial1.println(command);
@@ -800,7 +800,7 @@ void sendLibraryInfo() {
 }
 
 // Sends the four rows around the selection, scrolled so the selection is
-// always on screen. The WROVER draws whatever it is given and keeps no
+// always on screen. The WROOM draws whatever it is given and keeps no
 // playlist of its own.
 void sendListWindow() {
   int first = 0;
@@ -930,23 +930,23 @@ void beginTrack(int index) {
   creditFx = 0;
   // Assume the receiver is already at target, not empty. Starting at 0 puts
   // the rate controller in its "speed up" band before any report arrives.
-  wroverLevel = BUF_TARGET_LOW;
-  wroverDry = 0;
-  wroverGap = 0;
+  wroomLevel = BUF_TARGET_LOW;
+  wroomDry = 0;
+  wroomGap = 0;
   lastBufMs = millis();
   lastPumpUs = micros();
   stalledSince = 0;
   stallWarned = false;
 
   // Radios off before a single audio byte moves. Both share the 3.3 V rail
-  // with the WROVER, and a sagging rail is how this project learned about
+  // with the WROOM, and a sagging rail is how this project learned about
   // brownouts. Wi-Fi is the expensive one; BLE stays up for control.
   if (wirelessWifiActive()) {
     Serial.println("Stopping Wi-Fi before playback.");
     wirelessWifiStop();
   }
 
-  // Display first: once AUDIO_BEGIN goes out the WROVER stops reading text.
+  // Display first: once AUDIO_BEGIN goes out the WROOM stops reading text.
   char line[48];
   sendTrackInfo();
   sendCommand("STATE PLAYING");
@@ -962,7 +962,7 @@ void beginTrack(int index) {
   Serial.println("s)");
 }
 
-// Sends the end marker and parks what happens next until the WROVER confirms.
+// Sends the end marker and parks what happens next until the WROOM confirms.
 void closeStream(NextAction action, int index) {
   crumbSet("closeStream");
   uint8_t marker[STREAM_END_RUN];
@@ -1069,7 +1069,7 @@ uint32_t currentRate() {
     stalledSince = 0;
     return STREAM_RATE;
   }
-  if (wroverLevel > BUF_STALL) {
+  if (wroomLevel > BUF_STALL) {
     // Normal for a moment, and normal for as long as playback is paused.
     // Persisting without a pause means the receiver has stopped draining.
     if (stalledSince == 0) stalledSince = millis();
@@ -1077,8 +1077,8 @@ uint32_t currentRate() {
   }
   stalledSince = 0;
   stallWarned = false;
-  if (wroverLevel < BUF_TARGET_LOW)  return STREAM_RATE + STREAM_RATE / 8;
-  if (wroverLevel > BUF_TARGET_HIGH) return STREAM_RATE - STREAM_RATE / 5;
+  if (wroomLevel < BUF_TARGET_LOW)  return STREAM_RATE + STREAM_RATE / 8;
+  if (wroomLevel > BUF_TARGET_HIGH) return STREAM_RATE - STREAM_RATE / 5;
   return STREAM_RATE;
 }
 
@@ -1162,7 +1162,7 @@ void pumpAudio() {
 }
 
 // ============================================================================
-//  Protocol from the WROVER
+//  Protocol from the WROOM
 // ============================================================================
 void onButton(const char* button) {
   // NEXT / PREV change track and only arrive while something is playing.
@@ -1180,43 +1180,43 @@ void onButton(const char* button) {
   else if (strcmp(button, "RECSTOP") == 0) request = REQ_REC_STOP;
   else if (strcmp(button, "BLE_ON") == 0) {
     wirelessBleStart();
-    sendSettingsToWrover();
+    sendSettingsToWroom();
   }
   else if (strcmp(button, "BLE_OFF") == 0) {
     wirelessBleStop();
-    sendSettingsToWrover();
+    sendSettingsToWroom();
   }
   else if (strcmp(button, "WIFI_ON") == 0) {
     if (wirelessWifiStart()) {
-      sendSettingsToWrover();
+      sendSettingsToWroom();
     } else {
       sendCommand("MSG Wi-Fi AP stopped: playing");
     }
   }
   else if (strcmp(button, "WIFI_OFF") == 0) {
     wirelessWifiStop();
-    sendSettingsToWrover();
+    sendSettingsToWroom();
   }
   else if (strcmp(button, "SETTINGS_REQ") == 0) {
-    sendSettingsToWrover();
+    sendSettingsToWroom();
   }
   else if (strcmp(button, "AUDIO_ON") == 0)   setVoiceMode(true);
   else if (strcmp(button, "AUDIO_OFF") == 0)  setVoiceMode(false);
   else if (strcmp(button, "VISION_ON") == 0)  setVisionMode(true);
   else if (strcmp(button, "VISION_OFF") == 0) setVisionMode(false);
-  // PAUSE and RESUME are handled entirely on the WROVER; they arrive here for
+  // PAUSE and RESUME are handled entirely on the WROOM; they arrive here for
   // visibility only.
 }
 
-void handleWroverLine(const char* line) {
+void handleWroomLine(const char* line) {
   if (strncmp(line, "BUF ", 4) == 0) {
     // BUF <backlog> <dry> <gap>
-    wroverLevel = static_cast<uint32_t>(atoi(line + 4));
+    wroomLevel = static_cast<uint32_t>(atoi(line + 4));
     const char* space = strchr(line + 4, ' ');
     if (space) {
-      wroverDry = static_cast<uint32_t>(atoi(space + 1));
+      wroomDry = static_cast<uint32_t>(atoi(space + 1));
       const char* space2 = strchr(space + 1, ' ');
-      if (space2) wroverGap = static_cast<uint32_t>(atoi(space2 + 1));
+      if (space2) wroomGap = static_cast<uint32_t>(atoi(space2 + 1));
     }
     lastBufMs = millis();
     return;                                      // too chatty to echo
@@ -1237,21 +1237,21 @@ void handleWroverLine(const char* line) {
     wirelessNotify(line); // forward to BLE client
     return;
   }
-  Serial.print("WROVER says: ");
+  Serial.print("WROOM says: ");
   Serial.println(line);
 }
 
-void handleWroverInput() {
+void handleWroomInput() {
   while (Serial1.available()) {
     char c = static_cast<char>(Serial1.read());
     if (c == '\r' || c == '\n') {
-      if (wroverLen > 0) {
-        wroverLine[wroverLen] = '\0';
-        wroverLen = 0;
-        handleWroverLine(wroverLine);
+      if (wroomLen > 0) {
+        wroomLine[wroomLen] = '\0';
+        wroomLen = 0;
+        handleWroomLine(wroomLine);
       }
-    } else if (c >= 32 && c <= 126 && wroverLen < sizeof(wroverLine) - 1) {
-      wroverLine[wroverLen++] = c;
+    } else if (c >= 32 && c <= 126 && wroomLen < sizeof(wroomLine) - 1) {
+      wroomLine[wroomLen++] = c;
     }
   }
 }
@@ -1274,7 +1274,7 @@ void printHelp() {
   Serial.println("  MICGAIN [1-32]     - recording level");
   Serial.println("  WIFI ON / WIFI OFF - Soft-AP upload server (stopped only)");
   Serial.println("The ePodd app speaks the same commands over BLE.");
-  Serial.println("Anything else is forwarded to the WROVER (diagnostics).");
+  Serial.println("Anything else is forwarded to the WROOM (diagnostics).");
   Serial.println("Buttons: LEFT/RIGHT tap = prev/next, hold = volume");
   Serial.println("         MIDDLE tap = play/pause, hold = stop");
 }
@@ -1323,7 +1323,7 @@ void handleCommandLine(char* line, bool fromApp) {
   } else if (!strcmp(line, "INFO")) {
     sendLibraryInfo();
     sendTrackInfo();
-    sendCommand("VOL"); // query WROVER for current volume to sync with app
+    sendCommand("VOL"); // query WROOM for current volume to sync with app
   } else if (!strcmp(line, "WHY")) {
     reportResetReason();
   } else if (!strcmp(line, "RESCAN")) {
@@ -1419,7 +1419,7 @@ void handleCommandLine(char* line, bool fromApp) {
   } else if (!strcmp(line, "STOP")) {
     request = REQ_STOP;
   } else if (!strcmp(line, "PAUSE")) {
-    // The WROVER owns pause, and it cannot be reached mid-stream over a link
+    // The WROOM owns pause, and it cannot be reached mid-stream over a link
     // that is carrying PCM. Stopping is the honest equivalent.
     request = REQ_STOP;
   } else if (!strcmp(line, "PLAY")) {
@@ -1433,7 +1433,7 @@ void handleCommandLine(char* line, bool fromApp) {
       requestPlay(n - 1);
     }
   } else if (!strncmp(line, "VOL", 3)) {
-    // Volume lives on the WROVER and reaching it means sending text, which is
+    // Volume lives on the WROOM and reaching it means sending text, which is
     // impossible mid-stream: the link is carrying PCM.
     if (state == PS_STOPPED) sendCommand(line);
     else Serial.println("Hold LEFT or RIGHT for volume while playing.");
@@ -1509,7 +1509,7 @@ void setVoiceMode(bool on) {
   voiceMode = on;
   Serial.print("Voice keyword mode: ");
   Serial.println(on ? "ON" : "OFF");
-  sendSettingsToWrover();
+  sendSettingsToWroom();
 }
 
 void setVisionMode(bool on) {
@@ -1524,7 +1524,7 @@ void setVisionMode(bool on) {
   visionMode = on;
   Serial.print("Person detection: ");
   Serial.println(on ? "ON" : "OFF");
-  sendSettingsToWrover();
+  sendSettingsToWroom();
 }
 
 // Called by the vision task when someone sits down at the table. One shot: the
@@ -1551,7 +1551,7 @@ void onGuestGone() {
   setVisionMode(true);
 }
 
-void sendSettingsToWrover() {
+void sendSettingsToWroom() {
   char buf[128];
   // Field 6: voiceMode (1=Voice AI on, 0=off)
   snprintf(buf, sizeof(buf), "SETTINGS %d %d %s %s %s %d %d",
@@ -1742,7 +1742,7 @@ static void voiceTask(void*) {
         Serial.println("Voice: cannot take the microphone");
         voiceMode = false;
         sendCommand("MSG microphone busy");
-        sendSettingsToWrover();
+        sendSettingsToWroom();
         vTaskDelay(pdMS_TO_TICKS(500));
         continue;
       }
@@ -1945,7 +1945,7 @@ void setup() {
   listTracks();
   sendSourceInfo();
   showStopped();
-  sendSettingsToWrover();
+  sendSettingsToWroom();
 }
 
 void loop() {
@@ -1955,8 +1955,8 @@ void loop() {
   handleAppInput();
   crumbSet("wireless");
   wirelessService();
-  crumbSet("wroverInput");
-  handleWroverInput();
+  crumbSet("wroomInput");
+  handleWroomInput();
   // Exactly one place where the player changes state, and it is never inside a
   // serial read loop.
   if (endReceived) {
@@ -1975,11 +1975,11 @@ void loop() {
       if (millis() - lastHealthMs >= 2000) {
         lastHealthMs = millis();
         Serial.print("HEALTH buf=");
-        Serial.print(wroverLevel);
+        Serial.print(wroomLevel);
         Serial.print(" dry=");
-        Serial.print(wroverDry);
+        Serial.print(wroomDry);
         Serial.print(" gap=");
-        Serial.print(wroverGap);
+        Serial.print(wroomGap);
         Serial.print(" at=");
         Serial.print(sentBytes / STREAM_RATE);
         Serial.print("s heap=");
@@ -1993,10 +1993,10 @@ void loop() {
       break;
 
     case PS_CLOSING:
-      // The WROVER should answer with END. If it does not, carry on anyway
+      // The WROOM should answer with END. If it does not, carry on anyway
       // rather than leaving the player wedged.
       if (millis() - closingSince > CLOSING_TIMEOUT_MS) {
-        Serial.println("No END from the WROVER; continuing.");
+        Serial.println("No END from the WROOM; continuing.");
         runNextAction();
       }
       break;

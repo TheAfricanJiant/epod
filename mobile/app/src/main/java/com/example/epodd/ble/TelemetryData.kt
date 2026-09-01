@@ -27,7 +27,7 @@ data class TelemetryData(
 )
 
 /**
- * Parses ePod ASCII telemetry lines sent by S3/WROVER over UART/BLE/Wi-Fi:
+ * Parses ePod ASCII telemetry lines sent by S3/WROOM over UART/BLE/Wi-Fi:
  * - "INFO <tracks> <seconds> <cardMB>"
  * - "TRACK <index> <total> <name>"
  * - "STATE <PLAYING|STOPPED|PAUSED>"

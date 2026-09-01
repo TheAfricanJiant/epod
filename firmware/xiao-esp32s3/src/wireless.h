@@ -14,7 +14,7 @@
 //            tracks.
 //
 //  THE RULE THAT MATTERS: neither radio may be transmitting while audio is
-//  streaming. Both share the 3.3 V rail with the WROVER, and this project has
+//  streaming. Both share the 3.3 V rail with the WROOM, and this project has
 //  already been bitten once by a rail that sagged (see TROUBLESHOOTING item
 //  14). Wi-Fi is therefore forced off before playback starts.
 // ============================================================================

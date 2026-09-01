@@ -1,8 +1,7 @@
-# ESP32-WROVER — UI & Playback Core
+# ESP32-WROOM — UI and Playback Core
 
-Everything the guest sees and hears. The WROVER owns the OLED, the buttons and
-the audio output, and it does nothing else — so that playback is never
-interrupted.
+Everything the guest sees and hears. The WROOM owns the OLED, the buttons and
+the audio output, and nothing else, so that playback is never interrupted.
 
 [← back to the project README](../../README.md)
 
@@ -24,7 +23,7 @@ interrupted.
 
 | Area | Detail |
 |---|---|
-| Display | SSD1306 128×64 OLED — menus, playback, settings |
+| Display | SSD1306 128×64 OLED: menus, playback, settings |
 | Input | Three buttons, tap and hold, with volume repeat |
 | Audio out | Streams raw PCM received over UART |
 | Settings | Toggles for BLE, Wi-Fi, Voice AI and Vision AI |
@@ -67,15 +66,15 @@ pio device monitor   # 115200 baud
 | Record | — | stop | stop |
 | Settings | move selection | toggle | back to home |
 
-Holding left or right adjusts volume with key repeat. A long press is
-suppressed from also firing the tap action on release.
+Holding left or right changes the volume, repeating while you hold. After a long
+press, the tap action does not also fire when you let go.
 
 ---
 
 ## Settings menu
 
-Five rows at 9 px rather than four at 10 — a 64 px panel has no spare lines, so
-the detail footer shrank to a single line to make room for the Vision entry.
+Five rows at 9 px instead of four at 10. A 64 px panel has no spare lines, so
+the detail footer was cut to one line to fit the Vision entry.
 
 ```
 > BLE Bluetooth        OFF
@@ -87,9 +86,9 @@ P:epodmusicpass
 ```
 
 Selecting a row sends the request to the S3 and stays on the screen. The S3
-decides what is allowed — vision and voice are mutually exclusive — and replies
-with a fresh `SETTINGS` line, so the `ON`/`OFF` label is a report of what
-actually happened rather than an assumption.
+decides what is allowed (vision and voice cannot both be on) and replies with a
+fresh `SETTINGS` line, so the `ON`/`OFF` label shows what actually happened
+rather than what was asked for.
 
 The footer shows whichever fact is most useful at the time: the Wi-Fi password
 while the access point is up, otherwise what the active model is doing.
@@ -98,8 +97,8 @@ while the access point is up, otherwise what the active model is doing.
 
 ## Link protocol
 
-Newline-terminated ASCII over UART at 115200. The WROVER sends button intent;
-the S3 sends state.
+Newline-terminated ASCII over UART at 115200. The WROOM sends button intent; the
+S3 sends state.
 
 **To the S3**
 
@@ -123,18 +122,17 @@ MSG <text>
 
 The `SETTINGS` line is split into fields before parsing. An earlier version
 walked it with nested `strchr` calls and stopped after the IP address, so the
-trailing flags were never read — the menu showed `OFF` permanently and the
+trailing flags were never read: the menu showed `OFF` permanently, and the
 unterminated IP field swallowed the next value.
 
 ---
 
 ## Why two microcontrollers
 
-Audio streaming is unforgiving of interruption. Every job that stalls
-unpredictably — SD seeks, radio traffic, neural inference — lives on the S3,
-and the WROVER is left with a steady, predictable loop: read the UART, push
-samples, draw the screen.
+Audio breaks up if anything stalls the loop that feeds it. Every job that can
+stall unpredictably (SD seeks, radio traffic, inference) lives on the S3, which
+leaves the WROOM a steady loop: read the UART, push samples, draw the screen.
 
-The radios also matter electrically. Both boards share the 3.3 V rail, and an
+The radios matter electrically too. Both boards share the 3.3 V rail, and an
 early revision browned out when Wi-Fi transmitted during playback. The firmware
-now forces the radio off before playback starts.
+now turns the radio off before playback starts.

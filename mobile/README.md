@@ -1,8 +1,8 @@
 <div align="center">
 
-# 🎵 ePodd — ePod Companion App
+# ePodd — ePod Companion App
 
-**A high-performance Android companion application, audio DSP encoder, and wireless transport manager for the ePod Hardware Music Player.**
+**An Android app that converts music for the ePod, sends it over, and controls playback.**
 
 [![Android](https://img.shields.io/badge/Platform-Android_8.0+-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://android.com)
 [![Kotlin](https://img.shields.io/badge/Language-Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)](https://kotlinlang.org)
@@ -10,229 +10,193 @@
 [![Bluetooth LE](https://img.shields.io/badge/Wireless-BLE_GATT-0082FC?style=for-the-badge&logo=bluetooth&logoColor=white)](#)
 [![Wi-Fi HTTP](https://img.shields.io/badge/Wireless-Wi--Fi_Soft--AP-FF9900?style=for-the-badge&logo=wifi&logoColor=white)](#)
 
-<br />
-
-> **ePodd** bridges mobile audio libraries with low-power ePod microcontrollers. It decodes audio tracks into ePod-compatible 8-bit unsigned PCM streams, offers live preview listening on device speakers, controls ePod playback via ASCII hardware protocols, and transfers tracks over high-speed Wi-Fi or direct Bluetooth Low Energy (BLE).
-
 </div>
+
+The ePod plays raw 8-bit PCM off an SD card and nothing else, so tracks have to
+be converted before they get there. This app does the conversion on the phone,
+lets you listen to the result first, and then sends the files to the device over
+Wi-Fi or Bluetooth. It also works as a remote control, with transport buttons,
+volume, and a status page for battery and storage.
+
+[← back to the project README](../README.md)
 
 ---
 
-## 📱 Interface Showcase
+## Table of Contents
 
-<div align="center">
-  <h3>✨ Mobile App Experience</h3>
-  <p><i>Sleek, dark-mode native interface powered by Jetpack Compose</i></p>
-  
-  <br/>
-
-  <table>
-    <tr>
-      <td width="33%" align="center">
-        <b>📡 BLE Device Discovery</b><br/><br/>
-        <img src="./mobile/Screenshot_2026-08-30-13-54-44-36_dc92c9c3c7862d337cc55f1d243ecead.jpg" alt="BLE Scanner" width="280"/>
-      </td>
-      <td width="33%" align="center">
-        <b>🎵 Remote Control & Visualizer</b><br/><br/>
-        <img src="./mobile/Screenshot_2026-08-30-13-56-07-30_dc92c9c3c7862d337cc55f1d243ecead.jpg" alt="Remote Control" width="280"/>
-      </td>
-      <td width="33%" align="center">
-        <b>📊 Hardware Telemetry & Logs</b><br/><br/>
-        <img src="./mobile/Screenshot_2026-08-30-13-57-13-84_dc92c9c3c7862d337cc55f1d243ecead.jpg" alt="Status Telemetry" width="280"/>
-      </td>
-    </tr>
-    <tr>
-      <td align="center"><i>Scan & connect to ePod via BLE GATT with live RSSI signal indicators</i></td>
-      <td align="center"><i>Real-time audio visualizer bar, transport controls, and physical volume sync</i></td>
-      <td align="center"><i>Live battery gauge, 128GB SD storage meter, and active ASCII console log</i></td>
-    </tr>
-  </table>
-
-  <br/><br/>
-
-  <table>
-    <tr>
-      <td width="33%" align="center">
-        <b>🎛️ Audio Encoder & Queue</b><br/><br/>
-        <img src="./mobile/Screenshot_2026-08-30-13-56-33-09_dc92c9c3c7862d337cc55f1d243ecead.jpg" alt="Audio Encoder" width="280"/>
-      </td>
-      <td width="33%" align="center">
-        <b>⚡ Live DSP Batch Encoding</b><br/><br/>
-        <img src="./mobile/Screenshot_2026-08-30-13-56-40-45_dc92c9c3c7862d337cc55f1d243ecead.jpg" alt="Batch Encoding" width="280"/>
-      </td>
-      <td width="33%" align="center">
-        <b>🎧 Converted Track Preview</b><br/><br/>
-        <img src="./mobile/Screenshot_2026-08-30-13-56-55-05_dc92c9c3c7862d337cc55f1d243ecead.jpg" alt="Library Preview" width="280"/>
-      </td>
-    </tr>
-    <tr>
-      <td align="center"><i>Pick audio files with Voice (De-ess) or Loud (Treble) DSP sound profiles</i></td>
-      <td align="center"><i>Animated background conversion queue with real-time percentage indicators</i></td>
-      <td align="center"><i>Listen to 8-bit mono PCM playback on mobile speakers before transferring</i></td>
-    </tr>
-  </table>
-
-  <br/><br/>
-
-  <table>
-    <tr>
-      <td width="50%" align="center">
-        <b>📡 Connected BLE Link (MTU 256)</b><br/><br/>
-        <img src="./mobile/Screenshot_2026-08-30-13-55-47-03_dc92c9c3c7862d337cc55f1d243ecead.jpg" alt="Connected BLE" width="280"/>
-      </td>
-      <td width="50%" align="center">
-        <b>🚀 Direct BLE Stream Transfer</b><br/><br/>
-        <img src="./mobile/Screenshot_2026-08-30-13-57-02-60_dc92c9c3c7862d337cc55f1d243ecead.jpg" alt="BLE Stream Transfer" width="280"/>
-      </td>
-    </tr>
-    <tr>
-      <td align="center"><i>Maintains persistent connection with automatic telemetry polling</i></td>
-      <td align="center"><i>Chunked MTU wireless streaming with live upload progress tracking</i></td>
-    </tr>
-  </table>
-
-</div>
+- [Screens](#screens)
+- [What it does](#what-it-does)
+- [How a track gets to the device](#how-a-track-gets-to-the-device)
+- [Audio format](#audio-format)
+- [Command protocol](#command-protocol)
+- [Building](#building)
+- [Permissions](#permissions)
 
 ---
 
-## 🖼️ Feature Showcase Collages
+## Screens
 
 <div align="center">
 
-| 🎵 Remote Control & BLE Pairing | 📊 System Telemetry & Library Transfer |
+| Find and connect | Remote control | Status and logs |
+| :---: | :---: | :---: |
+| <img src="./mobile/Screenshot_2026-08-30-13-54-44-36_dc92c9c3c7862d337cc55f1d243ecead.jpg" alt="BLE scanner" width="260"/> | <img src="./mobile/Screenshot_2026-08-30-13-56-07-30_dc92c9c3c7862d337cc55f1d243ecead.jpg" alt="Remote control" width="260"/> | <img src="./mobile/Screenshot_2026-08-30-13-57-13-84_dc92c9c3c7862d337cc55f1d243ecead.jpg" alt="Status" width="260"/> |
+| Scan for the ePod over BLE, with signal strength per device | Transport buttons, volume, and a level meter | Battery, free SD space, and the raw command log |
+
+| Pick and convert | Conversion queue | Preview |
+| :---: | :---: | :---: |
+| <img src="./mobile/Screenshot_2026-08-30-13-56-33-09_dc92c9c3c7862d337cc55f1d243ecead.jpg" alt="Converter" width="260"/> | <img src="./mobile/Screenshot_2026-08-30-13-56-40-45_dc92c9c3c7862d337cc55f1d243ecead.jpg" alt="Batch conversion" width="260"/> | <img src="./mobile/Screenshot_2026-08-30-13-56-55-05_dc92c9c3c7862d337cc55f1d243ecead.jpg" alt="Library preview" width="260"/> |
+| Choose files and a sound profile, Voice or Loud | Converts one after another, with progress per file | Play the converted file on the phone before sending it |
+
+| Connected | Sending over BLE |
 | :---: | :---: |
-| <img src="./mobile/collage/cwf7kDLINE.png" alt="Remote Control Collage" width="440"/> | <img src="./mobile/collage/0WO6YfaFjY.png" alt="Telemetry Collage" width="440"/> |
+| <img src="./mobile/Screenshot_2026-08-30-13-55-47-03_dc92c9c3c7862d337cc55f1d243ecead.jpg" alt="Connected" width="260"/> | <img src="./mobile/Screenshot_2026-08-30-13-57-02-60_dc92c9c3c7862d337cc55f1d243ecead.jpg" alt="BLE transfer" width="260"/> |
+| Stays connected and polls the device for status | Sends the file in MTU-sized chunks, with progress |
+
+</div>
+
+<div align="center">
+
+| Remote control and pairing | Status and transfers |
+| :---: | :---: |
+| <img src="./mobile/collage/cwf7kDLINE.png" alt="Remote control collage" width="440"/> | <img src="./mobile/collage/0WO6YfaFjY.png" alt="Telemetry collage" width="440"/> |
 
 </div>
 
 ---
 
-## ✨ Key Features
+## What it does
 
-### 🎛️ 1. Professional DSP Audio Converter
-- **Multi-Format Decoding**: Decodes `.mp3`, `.m4a`, `.wav`, `.flac`, and `.aac` audio files into ePod headerless `.raw` PCM format.
-- **22050 Hz 8-bit Quantizer**: Converts multi-channel audio to single-channel mono ($\frac{L+R}{2}$) sampled at 22,050 Hz with 8-bit unsigned quantization (`0x01` to `0xFF`).
-- **UART Byte Safety (Clamping)**: Automatically replaces `0x00` null bytes with `0x01` to prevent premature UART stream termination on ePod microcontrollers.
-- **DSP Preset Filter Modes**:
-  - 🗣️ **Voice Mode (De-ess)**: Attenuates sub-bass (80Hz high-pass filter), applies notch filtering at 6.5kHz (-7dB), normalizes dynamic range, and tames harsh consonants.
-  - 🎸 **Loud Mode (Treble)**: Retains full high-frequency brilliance for instrumental music and acoustic tracks.
-- **Batch Processing Queue**: Converts multi-file batches sequentially with per-file progress animations.
+### Convert audio
 
-### 🎧 2. Persistent Library & Mobile Audio Preview
-- **Local Cache Storage**: Converted tracks are persisted in app cache (`/epod_raw`), surviving app restarts, BLE pair events, and tab switches.
-- **In-App PCM Preview**: Listen to processed 22050 Hz 8-bit PCM tracks directly on your mobile phone's speaker via native Android `AudioTrack` before sending them to ePod hardware.
-- **Library Management**: Selective track checkbox queuing, sharing, and cache cleanup.
+- Reads `.mp3`, `.m4a`, `.wav`, `.flac` and `.aac`, and writes the headerless
+  `.raw` PCM the ePod expects.
+- Mixes to mono, resamples to 22,050 Hz, and quantises to unsigned 8-bit.
+- Replaces any `0x00` byte with `0x01`. A null byte would end the UART string
+  early and cut the track off.
+- Two sound profiles:
+  - **Voice**: high-pass at 80 Hz, a notch at 6.5 kHz (−7 dB), and dynamic range
+    normalisation. Speech-heavy tracks come out clearer and less harsh on an
+    8-bit output.
+  - **Loud**: keeps the high frequencies as they are. Better for music.
+- Converts several files in a row, showing progress for each one.
 
-### 📡 3. Dual Wireless Transport Engine
-- **🚀 Wi-Fi Soft-AP Direct Upload (High Speed)**:
-  - Connects to ePod's Wi-Fi Access Point (`ePod-Music` / `http://192.168.4.1/upload`).
-  - Streams multi-part HTTP file packets directly onto ePod's SD card at high speed.
-  - Automatically triggers an ASCII `RESCAN` command upon upload completion.
-- **📶 BLE Direct GATT Streaming**:
-  - Frames tracks into MTU-chunked GATT packets (Characteristic `EP03`) for seamless streaming without needing Wi-Fi.
+### Keep a library on the phone
 
-### 🎛️ 4. Hardware ASCII Remote Control
-- **Live Visualizer**: Interactive dynamic equalizer visualizer.
-- **Transport Controls**: Hardware `PLAY`, `PAUSE`, `STOP`, `NEXT`, `PREV` trigger commands.
-- **Bidirectional Volume Sync**: Adjusts ePod volume (`VOL <n>`) and syncs slider when volume is adjusted via physical ePod hardware buttons.
-- **Overlay Device Scanner**: Connect to new hardware without losing active conversion queues or track selections.
+- Converted tracks are kept in the app cache (`/epod_raw`), so they survive an
+  app restart, a re-pair, or switching tabs.
+- Each track can be played back on the phone speaker through Android's
+  `AudioTrack`, so you can hear the 8-bit result before sending it.
+- Tracks can be selected, shared, or deleted from the cache.
 
-### 📊 5. Real-Time Telemetry & System Diagnostics
-- **Battery & Storage Monitors**: Circular gauge indicators showing battery percentage and free SD capacity (GB).
-- **System Console Log**: Live terminal window displaying raw ASCII Rx/Tx telemetry packet exchanges and status notifications.
+### Send tracks to the device
+
+- **Over Wi-Fi**: joins the ePod's access point (`ePod-Music`) and POSTs the file
+  to `http://192.168.4.1/upload`, straight onto the SD card. This is the fast
+  path. When the upload finishes the app sends `RESCAN` so the device re-indexes
+  the card.
+- **Over BLE**: splits the file into MTU-sized packets and writes them in order
+  to characteristic `EP03`. Slower, but it works without Wi-Fi.
+
+### Control the device
+
+- `PLAY`, `PAUSE`, `STOP`, `NEXT` and `PREV`.
+- A volume slider that sends `VOL <n>`. If you change the volume with the
+  buttons on the ePod, the device reports the new level back and the slider
+  follows it.
+- A level meter driven by playback.
+- Scanning for a device opens over the current screen, so you do not lose the
+  conversion queue or your selection.
+
+### Show device status
+
+- Battery percentage and free SD space, as circular gauges.
+- A console view of the raw ASCII lines going in and out.
 
 ---
 
-## 🏗️ Architecture & Data Flow
+## How a track gets to the device
 
 ```
-                           +-------------------------------------+
-                           |      Audio File Selection           |
-                           |   (MP3, M4A, WAV, FLAC, AAC)        |
-                           +-------------------------------------+
-                                              |
-                                              v
-                           +-------------------------------------+
-                           |     Android DSP Audio Converter     |
-                           |  - Resample: 22050 Hz Mono          |
-                           |  - Quantize: 8-bit Unsigned (0x01-FF)|
-                           |  - Filter: Voice De-ess / Loud Mode |
-                           |  - Clamp: 0x00 -> 0x01 UART Safety  |
-                           +-------------------------------------+
-                                              |
-                                              v
-                           +-------------------------------------+
-                           |   Persistent Converted Library      |
-                           |  - Local Storage Cache              |
-                           |  - In-App AudioTrack Preview        |
-                           +-------------------------------------+
-                                              |
-                                              v
-                           +-------------------------------------+
-                           |     Transport Selection Switch      |
-                           +-------------------------------------+
-                                       /             \
-                                      /               \
-        +----------------------------------+     +----------------------------------+
-        |   Wi-Fi Soft-AP Upload (HTTP)    |     |    BLE Direct GATT Streaming     |
-        |   http://192.168.4.1/upload      |     |    GATT EP03 Packet Framing      |
-        +----------------------------------+     +----------------------------------+
-                        |                                          |
-                        +--------------------+---------------------+
-                                             |
-                                             v
-                           +-------------------------------------+
-                           |        ePod Hardware Device         |
-                           |   - Microcontroller DAC DMA         |
-                           |   - SD Card Storage (/music/)       |
-                           +-------------------------------------+
+                   +-----------------------------------+
+                   |   Audio file on the phone         |
+                   |   (MP3, M4A, WAV, FLAC, AAC)      |
+                   +-----------------------------------+
+                                     |
+                                     v
+                   +-----------------------------------+
+                   |   Convert on the phone            |
+                   |   - mono, 22050 Hz                |
+                   |   - unsigned 8-bit (0x01-0xFF)    |
+                   |   - Voice or Loud profile         |
+                   |   - replace 0x00 with 0x01        |
+                   +-----------------------------------+
+                                     |
+                                     v
+                   +-----------------------------------+
+                   |   Saved in the app cache          |
+                   |   playable on the phone speaker   |
+                   +-----------------------------------+
+                                     |
+                                     v
+                   +-----------------------------------+
+                   |   Pick a transport                |
+                   +-----------------------------------+
+                            /               \
+                           /                 \
+      +----------------------------+   +----------------------------+
+      |  Wi-Fi upload over HTTP    |   |  BLE transfer              |
+      |  http://192.168.4.1/upload |   |  GATT EP03, chunked        |
+      +----------------------------+   +----------------------------+
+                       |                            |
+                       +-------------+--------------+
+                                     |
+                                     v
+                   +-----------------------------------+
+                   |   ePod                            |
+                   |   - DAC via DMA                   |
+                   |   - SD card (/music/)             |
+                   +-----------------------------------+
 ```
 
 ---
 
-## 🛠️ Technical Specifications
+## Audio format
 
-### Audio Format Specification (ePod DAC Standard)
-
-| Attribute | Value / Format | Engineering Rationale |
-| :--- | :--- | :--- |
-| **Codec / Stream** | Raw PCM (Headerless) | Direct zero-overhead hardware DAC DMA buffer streaming |
-| **Quantization** | Unsigned 8-bit (`0x01` - `0xFF`) | Matches microcontroller DAC hardware resolution |
-| **Sample Rate** | 22,050 Hz | Fixed DAC hardware clock frequency |
-| **Channels** | 1 (Mono) | Averages stereo channels: $(L + R) / 2$ |
-| **Silence Bias** | `0x80` (128) | Unsigned mid-level zero crossing |
-| **Byte Clamping** | `0x00` $\rightarrow$ `0x01` | Avoids premature UART string termination (`\0`) |
-| **File Limit** | 32 character alphanumeric | Clean FAT32 SD card filesystem compatibility |
+| Attribute | Value | Why |
+|---|---|---|
+| Stream | Raw PCM, no header | Feeds the DAC's DMA buffer directly |
+| Sample depth | Unsigned 8-bit (`0x01`–`0xFF`) | Matches the DAC |
+| Sample rate | 22,050 Hz | Fixed by the firmware's playback clock |
+| Channels | Mono | Stereo is averaged: (L + R) / 2 |
+| Silence | `0x80` (128) | Mid-point for unsigned samples |
+| Byte clamp | `0x00` → `0x01` | A null byte would end the UART string early |
+| Filename | 32 characters, alphanumeric | Keeps FAT32 happy |
 
 ---
 
-## 📡 Hardware ASCII Protocol Command Suite
+## Command protocol
 
-The mobile app communicates with ePod hardware via standard ASCII string packets over BLE / Serial UART:
+The app talks to the ePod with plain ASCII lines over BLE or serial:
 
-| Command | Action / Payload | Description |
-| :--- | :--- | :--- |
-| `PLAY` | Transport Control | Resumes hardware audio playback |
-| `PAUSE` | Transport Control | Pauses hardware audio playback |
-| `STOP` | Transport Control | Stops audio playback and resets DAC buffer |
-| `NEXT` | Track Skip | Advances to the next track on SD card |
-| `PREV` | Track Skip | Skips to the previous track on SD card |
-| `VOL <0-100>` | Volume Sync | Sets hardware DAC output volume level |
-| `INFO` | Telemetry Query | Requests battery level and SD storage status |
-| `LIST` | Library Query | Requests current track index and total tracks |
-| `RESCAN` | File Rescan | Triggers SD card filesystem re-index |
+| Command | Description |
+|---|---|
+| `PLAY` | Resume playback |
+| `PAUSE` | Pause playback |
+| `STOP` | Stop and reset the DAC buffer |
+| `NEXT` | Next track |
+| `PREV` | Previous track |
+| `VOL <0-100>` | Set the volume |
+| `INFO` | Ask for battery level and SD status |
+| `LIST` | Ask for the current track index and total |
+| `RESCAN` | Re-index the SD card |
 
 ---
 
-## ⚙️ Compilation & Build Instructions
+## Building
 
-### Prerequisites
-- **Android Studio** (Ladybug / Iguana or newer)
-- **JDK 17** or higher
-- **Android SDK API level 34**
-
-### Build Debug APK
-Execute the Gradle wrapper command in terminal:
+You need Android Studio (Ladybug or newer), JDK 17 or higher, and Android SDK
+API level 34.
 
 ```bash
 # Windows
@@ -242,24 +206,23 @@ Execute the Gradle wrapper command in terminal:
 ./gradlew assembleDebug
 ```
 
-The output APK will be generated at:
-`app/build/outputs/apk/debug/app-debug.apk`
+The APK lands at `app/build/outputs/apk/debug/app-debug.apk`.
 
 ---
 
-## 📱 Android Network & Permission Manifest
+## Permissions
 
-The app is pre-configured with the required permissions for local HTTP uploads and BLE scanning:
+The manifest already asks for what BLE scanning and plain-HTTP uploads need:
 
 ```xml
-<!-- Bluetooth & Location Permissions -->
+<!-- Bluetooth and location -->
 <uses-permission android:name="android.permission.BLUETOOTH" />
 <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
 <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-<!-- Network & Cleartext HTTP Permissions for ePod Soft-AP -->
+<!-- Network, and cleartext HTTP for the ePod's access point -->
 <uses-permission android:name="android.permission.INTERNET" />
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
@@ -268,12 +231,5 @@ The app is pre-configured with the required permissions for local HTTP uploads a
     android:usesCleartextTraffic="true" ... >
 ```
 
----
-
-<div align="center">
-
-### 💡 Developed for the ePod Music System
-
-*Crafted with Jetpack Compose & Modern Android Development Practices*
-
-</div>
+`usesCleartextTraffic` is needed because the ePod serves plain HTTP at
+`http://192.168.4.1/upload`, which recent Android versions block by default.

@@ -1,13 +1,13 @@
 <div align="center">
 
-# ePod — Voice & Vision Restaurant Signage
+# ePod — Voice and Vision Restaurant Signage
 
-**A handheld media player turned into an interactive restaurant menu, driven entirely by on-device machine learning.**
+**A handheld media player rebuilt into a restaurant menu you browse by talking to it. All the machine learning runs on the device.**
 
-No cloud. No phone required at the table. A camera notices a guest sit down, the
-screen wakes, music starts, and the menu is browsed by voice.
+No cloud, and no phone needed at the table. A camera sees a guest sit down, the
+screen wakes up, music starts, and the guest browses the menu by voice.
 
-[![Platform](https://img.shields.io/badge/MCU-ESP32--S3_%2B_ESP32--WROVER-E7352C?style=for-the-badge&logo=espressif&logoColor=white)](https://espressif.com)
+[![Platform](https://img.shields.io/badge/MCU-ESP32--S3_%2B_ESP32--WROOM-E7352C?style=for-the-badge&logo=espressif&logoColor=white)](https://espressif.com)
 [![Framework](https://img.shields.io/badge/Framework-Arduino_%2F_PlatformIO-00979D?style=for-the-badge&logo=platformio&logoColor=white)](https://platformio.org)
 [![ML](https://img.shields.io/badge/Edge_ML-Edge_Impulse-3B47CE?style=for-the-badge)](https://edgeimpulse.com)
 [![App](https://img.shields.io/badge/Companion-Android_%2F_Kotlin-3DDC84?style=for-the-badge&logo=android&logoColor=white)](mobile/README.md)
@@ -36,16 +36,16 @@ screen wakes, music starts, and the menu is browsed by voice.
 
 ## What this is
 
-ePod began as a pocket music player: two microcontrollers, an SD card, an OLED,
-a PDM microphone and a pair of earphones. This repository is that player grown
-into a **digital signage terminal for restaurants**.
+ePod started as a pocket music player: two microcontrollers, an SD card, an
+OLED, a PDM microphone and a pair of earphones. This repository is that player
+turned into a **digital menu board for restaurants**.
 
-A guest sits down. A person-detection model running on the camera notices them
-and the display wakes from a sleeping-eyes idle screen. Ambient music begins.
-A line of text invites the guest to put their earphones on, and the menu takes
-over the screen. From there the guest browses by **speaking** — "next", "back" —
-and places an order by saying a wake phrase. No touchscreen, no waiting, and no
-network dependency: every model runs on the microcontroller itself.
+A guest sits down. A person-detection model sees them, and the screen wakes up
+from an idle screen of sleeping eyes. Music starts. A line of text asks the
+guest to put their earphones on, then the menu fills the screen. The guest
+browses by **speaking** ("next", "back") and orders by saying a wake phrase.
+There is no touchscreen and no network to depend on, because both models run on
+the microcontroller itself.
 
 ---
 
@@ -58,54 +58,53 @@ network dependency: every model runs on the microcontroller itself.
 | **Welcome** | — | *"Put your earphones on and enjoy the music."* |
 | **Menu** | — | Full-screen dishes. Voice control is live. |
 | **Browse** | "next" / "back" | The menu swipes between plates. |
-| **Order** | wake phrase | A confirmation tick — *Order placed.* |
+| **Order** | wake phrase | A confirmation tick, *Order placed.* |
 
-The vision and voice models are **mutually exclusive by design** — never both at
-once. The ESP32-S3 does not have the headroom to run a camera pipeline and a
-continuous audio classifier together, so the firmware treats the transition as a
-handover: the camera watches an empty table, and once a guest is present it
-stands down and hands the room to the microphone. Either can also be switched
-off by hand from the device's settings menu if a model misbehaves.
+The two models **never run at the same time**. The ESP32-S3 does not have enough
+room to run a camera pipeline and a continuous audio classifier together, so the
+firmware treats the switch as a handover: the camera watches an empty table, and
+once a guest arrives it shuts down and the microphone takes over. You can also
+turn either model off by hand from the device settings menu if one misbehaves.
 
 ---
 
 ## System architecture
 
 ```
-                        ┌──────────────────────────┐
-                        │   Menu web app (laptop)   │
-                        │  sleeping eyes → menu →   │
-                        │      order confirmed      │
-                        └────────────┬─────────────┘
-                                     │ HTTP over the ePod's own Wi-Fi AP
-                                     │ GET /api/state · POST /api/command
-                        ┌────────────┴─────────────┐
-                        │   XIAO ESP32-S3 Sense    │
-                        │   "AI & media core"      │
-                        │  • voice keyword model   │
-                        │  • person detection      │
-                        │  • SD card + audio       │
-                        │  • Wi-Fi AP + BLE        │
-                        └────────────┬─────────────┘
-                                     │ UART, line protocol
-                        ┌────────────┴─────────────┐
-                        │      ESP32-WROVER        │
-                        │   "UI & playback core"   │
-                        │  • OLED menus            │
-                        │  • buttons, volume       │
-                        │  • audio output          │
-                        └──────────────────────────┘
-                                     ⋮ BLE / Wi-Fi
-                        ┌──────────────────────────┐
-                        │   Android companion app   │
-                        │  library sync, transfers  │
-                        └──────────────────────────┘
+                       ┌──────────────────────────┐
+                       │  Menu web app (laptop)   │
+                       │  sleeping eyes → menu →  │
+                       │      order confirmed     │
+                       └────────────┬─────────────┘
+                                    │ HTTP over the ePod's own Wi-Fi AP
+                                    │ GET /api/state · POST /api/command
+                       ┌────────────┴─────────────┐
+                       │   XIAO ESP32-S3 Sense    │
+                       │   "AI and media core"    │
+                       │  • voice keyword model   │
+                       │  • person detection      │
+                       │  • SD card + audio       │
+                       │  • Wi-Fi AP + BLE        │
+                       └────────────┬─────────────┘
+                                    │ UART, line protocol
+                       ┌────────────┴─────────────┐
+                       │       ESP32-WROOM        │
+                       │  "UI and playback core"  │
+                       │  • OLED menus            │
+                       │  • buttons, volume       │
+                       │  • audio output          │
+                       └──────────────────────────┘
+                                    ⋮ BLE / Wi-Fi
+                       ┌──────────────────────────┐
+                       │  Android companion app   │
+                       │ library sync, transfers  │
+                       └──────────────────────────┘
 ```
 
-Splitting the work across two microcontrollers is deliberate. Audio streaming is
-unforgiving of interruption, so the WROVER does nothing but drive the interface
-and push samples, while the S3 absorbs everything bursty — inference, the SD
-card, and both radios.
+The work is split across two microcontrollers on purpose. Audio breaks up if
+anything stalls the loop that feeds it, so the WROOM only draws the interface
+and pushes samples, and the S3 takes everything that comes in bursts: inference,
+the SD card, and both radios.
 
 <div align="center">
 <img src="docs/media/wiring-diagram.png" width="80%" alt="Wiring diagram">
@@ -118,8 +117,8 @@ card, and both radios.
 ```
 ePod-Signage/
 ├── firmware/
-│   ├── xiao-esp32s3/     AI and media core — models, SD, radios, web API
-│   └── esp32-wrover/     UI and playback core — OLED, buttons, audio out
+│   ├── xiao-esp32s3/     AI and media core: models, SD, radios, web API
+│   └── esp32-wroom/      UI and playback core: OLED, buttons, audio out
 ├── mobile/               Android companion app (Kotlin, Jetpack Compose)
 ├── webapp/               The signage menu page shown to guests
 └── docs/media/           Renders, wiring, build photos, app screenshots
@@ -129,12 +128,12 @@ ePod-Signage/
 
 ## Component documentation
 
-Each part of the system documents itself:
+Each part has its own README:
 
 | Component | Documentation | Summary |
 |---|---|---|
 | 🧠 **XIAO ESP32-S3 firmware** | [`firmware/xiao-esp32s3/README.md`](firmware/xiao-esp32s3/README.md) | Voice and vision models, SD library, Wi-Fi AP, BLE, web API |
-| 🎛️ **ESP32-WROVER firmware** | [`firmware/esp32-wrover/README.md`](firmware/esp32-wrover/README.md) | OLED interface, button handling, audio streaming, settings |
+| 🎛️ **ESP32-WROOM firmware** | [`firmware/esp32-wroom/README.md`](firmware/esp32-wroom/README.md) | OLED interface, button handling, audio streaming, settings |
 | 📱 **Android companion app** | [`mobile/README.md`](mobile/README.md) | Track transfer, audio encoding, BLE and Wi-Fi transport |
 | 🖥️ **Signage web app** | [`webapp/README.md`](webapp/README.md) | The guest-facing menu, setup, and how to edit the dishes |
 
@@ -149,9 +148,9 @@ cd webapp
 python serve.py
 ```
 
-Open <http://localhost:8000> and press **F11**. It runs the full sequence on a
-timed loop out of the box, so the concept demonstrates itself with no hardware
-attached. Any key press hands you manual control.
+Open <http://localhost:8000> and press **F11**. With no hardware attached it
+runs the whole sequence on a timed loop, so you can see how it works right away.
+Press any key to take manual control.
 
 ### The firmware
 
@@ -159,17 +158,17 @@ Both boards build with [PlatformIO](https://platformio.org):
 
 ```bash
 cd firmware/xiao-esp32s3 && pio run -t upload
-cd firmware/esp32-wrover && pio run -t upload
+cd firmware/esp32-wroom && pio run -t upload
 ```
 
 ### Connecting the page to the device
 
 1. On the ePod: **Settings → Wi-Fi AP → ON**
 2. Join `ePod-Music` from the laptop
-3. Start `serve.py` — the status pill reads **connected**
+3. Start `serve.py`. The status pill should read **connected**
 
-`serve.py` also proxies `/api/*` to the device, which keeps the browser from
-treating the ePod as a cross-origin request.
+`serve.py` also forwards `/api/*` to the device, so the browser sees one origin
+instead of a cross-origin request.
 
 ---
 
@@ -183,7 +182,7 @@ treating the ePod as a cross-origin request.
 | Part | Role |
 |---|---|
 | Seeed XIAO ESP32-S3 Sense | Inference, camera, PDM microphone, SD, radios |
-| ESP32-WROVER | Interface and audio playback |
+| ESP32-WROOM | Interface and audio playback |
 | SSD1306 OLED, 128×64 | Menus and status |
 | MicroSD module | Track and recording storage |
 | 3.7 V LiPo + charger board | Portable power |
@@ -198,8 +197,8 @@ treating the ePod as a cross-origin request.
 
 ## Machine learning models
 
-Both models are trained in [Edge Impulse](https://edgeimpulse.com) and run
-entirely on-device.
+Both models are trained in [Edge Impulse](https://edgeimpulse.com) and run on
+the device.
 
 ### Voice keywords
 
@@ -210,15 +209,15 @@ entirely on-device.
 | Audio | 16 kHz PDM mono, 1-second window, 4 slices per window |
 | Latency | ~250–500 ms after the word ends |
 
-The `noise` and `unknown` classes are what make this usable. An earlier
-two-class model had no way to express "neither" — a softmax over two labels
-always sums to 1.0, so silence was continuously classified as a command. Adding
-explicit reject classes moved that judgement into the model where it belongs.
+The `noise` and `unknown` classes are what make the model usable. An earlier
+version had only two classes, and a softmax over two labels always adds up to
+1.0, so it had no way to say "neither" and it classified silence as a command
+non-stop. Adding reject classes lets the model make that call itself.
 
-Training audio was captured **on the target device itself**, through the same
-PDM microphone the model later listens through, and the firmware reproduces the
-capture gain exactly. A model trained on audio recorded by different hardware at
-a different level is a model that works in the browser and fails on the bench.
+The training audio was recorded **on the device itself**, through the same PDM
+microphone the model listens through later, and the firmware uses the same
+capture gain. If you train on audio recorded with other hardware at another
+level, the model tests well in the browser and then fails on the bench.
 
 ### Person detection
 
@@ -227,11 +226,11 @@ a different level is a model that works in the browser and fails on the bench.
 | Type | Object detection, single class (`person`) |
 | Purpose | Notice a guest at the table, then stop |
 
-Two impulses trained in two separate Edge Impulse projects cannot be exported as
-one library without an Enterprise plan, so
+Edge Impulse will not export two impulses from two separate projects as one
+library unless you are on an Enterprise plan, so
 [`firmware/xiao-esp32s3/tools/merge_impulse.py`](firmware/xiao-esp32s3/tools/merge_impulse.py)
-merges a second export into the existing library by hand. See that firmware's
-README for the current status and constraints of the vision path.
+merges a second export into the existing library instead. See that firmware's
+README for where the vision path currently stands.
 
 ---
 
@@ -262,8 +261,8 @@ Designed in Fusion 360 and 3D printed.
 
 ### An earlier direction
 
-The first plan used a speech-recognition approach that was abandoned once it
-became clear it would not fit the device's memory or latency budget.
+The first plan used speech recognition. It was dropped once it was clear it
+would not fit the device's memory or hit the latency needed.
 
 <div align="center">
 <img src="docs/media/early-discarded-concept.jpg" width="65%" alt="Early discarded concept">
@@ -273,26 +272,26 @@ became clear it would not fit the device's memory or latency budget.
 
 ## Known limitations
 
-Recorded honestly, because they shape what the project can currently do:
+These are worth knowing, because they set what the project can do today:
 
-- **The vision path is not yet running on-device.** The current person-detection
-  export is MobileNet SSD at 320×320, which Edge Impulse itself marks as unable
-  to run under TensorFlow Lite Micro, and which compiles to roughly 12 MB
-  against a 3.3 MB flash partition. Re-training the same data as **FOMO** at
-  96×96 is the intended fix; the merge tooling and the entire firmware and web
-  handover around it are already in place and tested.
-- **Voice accuracy varies with the room.** Recognition is good on the training
-  device in a quiet space and degrades in noise. More `noise` samples captured
-  in the deployment environment is the direct remedy.
-- **Vision and voice cannot run simultaneously.** This is enforced in firmware
-  rather than left to chance.
-- **Wi-Fi and audio streaming do not overlap.** Both share the 3.3 V rail, and
-  an early revision browned out under load; the firmware forces the radio off
-  before playback begins.
+- **The vision path does not run on the device yet.** The current
+  person-detection export is MobileNet SSD at 320×320. Edge Impulse itself marks
+  it as unable to run under TensorFlow Lite Micro, and it compiles to about
+  12 MB against a 3.3 MB flash partition. The fix is to re-train the same data
+  as **FOMO** at 96×96. The merge tooling, the firmware, and the web handover
+  around it are already written and tested.
+- **Voice accuracy depends on the room.** Recognition is good on the training
+  device in a quiet space and gets worse in noise. Recording more `noise`
+  samples where the device will be used is the direct fix.
+- **Vision and voice cannot run at the same time.** The firmware enforces this
+  rather than leaving it to chance.
+- **Wi-Fi and audio streaming do not overlap.** They share the 3.3 V rail, and
+  an early revision browned out under load, so the firmware turns the radio off
+  before playback starts.
 
 ---
 
 ## License
 
 Released under the MIT License. The bundled Edge Impulse SDK and model exports
-remain subject to Edge Impulse's own terms.
+are still covered by Edge Impulse's own terms.

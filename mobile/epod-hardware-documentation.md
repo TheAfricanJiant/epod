@@ -1,4 +1,4 @@
-# epod — Hardware Interconnect & Wiring Documentation
+# epod — Hardware Wiring Documentation
 
 | | |
 |---|---|
@@ -6,7 +6,7 @@
 | **Scope** | Dual-controller audio + storage + display + input subsystem |
 | **Primary MCU** | Seeed XIAO ESP32-S3 (on ReSpeaker Lite) |
 | **Secondary MCU** | Seeed XIAO ESP32-C3 |
-| **Status** | Verified — all connections below are tested and working |
+| **Status** | All connections below are tested and working |
 
 ---
 
@@ -14,7 +14,7 @@
 
 1. [Overview](#1-overview)
 2. [Primary Controller: ESP32-S3 on ReSpeaker Lite](#2-primary-controller-esp32-s3-on-respeaker-lite)
-3. [Design Rationale: Why a Second Controller](#3-design-rationale-why-a-second-controller)
+3. [Why a Second Controller](#3-why-a-second-controller)
 4. [System Architecture](#4-system-architecture)
 5. [Connection Tables](#5-connection-tables)
    - 5.1 [S3 ↔ C3 — Power & UART Link](#51-s3--c3--power--uart-link)
@@ -30,13 +30,12 @@
 
 ## 1. Overview
 
-epod is built around a **Seeed XIAO ESP32-S3**, pre-mounted on a **Seeed ReSpeaker
-Lite** carrier board for dual-microphone voice capture (XMOS XU316 audio
-front-end). The S3 handles audio and sensor input. Because the carrier board
-consumes nearly all of the S3's exposed GPIO for its own audio pipeline, a
-**second microcontroller — a XIAO ESP32-C3** — is used as a dedicated
-peripheral controller, linked to the S3 over UART, to drive a microSD card
-and an OLED status display.
+epod is built around a **Seeed XIAO ESP32-S3**, mounted on a **Seeed ReSpeaker
+Lite** carrier board that gives it a two-microphone array (XMOS XU316 audio
+front-end). The S3 handles audio and sensor input. The carrier board uses up
+almost all of the S3's exposed GPIO for its own audio pipeline, so a **second
+microcontroller, a XIAO ESP32-C3**, drives the microSD card and the OLED
+display instead. The two boards are linked over UART.
 
 ## 2. Primary Controller: ESP32-S3 on ReSpeaker Lite
 
@@ -56,18 +55,16 @@ audio path and I2C control bus to the XMOS XU316 / audio codec:
 **Pins available for custom use:** only **D0 (GPIO1), D1 (GPIO2), D2 (GPIO3),
 D3 (GPIO4)** — 4 of the S3's 11 GPIO remain free.
 
-## 3. Design Rationale: Why a Second Controller
+## 3. Why a Second Controller
 
-The project requires an SD card (SPI: CS, SCK, MOSI, MISO — 4 pins) **and**
-an OLED display (I2C: SDA, SCL — 2 pins) — **6 pins total**. Only 4 pins are
-free on the S3, so both peripherals cannot be driven directly from it.
+The project needs an SD card (SPI: CS, SCK, MOSI, MISO, so 4 pins) **and** an
+OLED display (I2C: SDA, SCL, so 2 pins). That is **6 pins**, and only 4 are
+free on the S3, so the S3 cannot drive both.
 
-A second XIAO ESP32-C3 was added as a dedicated I/O expander: a 2-wire UART
-link (TX/RX) connects the two boards, consuming only 2 of the S3's 4 free
-pins, while the C3 — which has a full 11-pin GPIO budget of its own — takes
-on the SD card and OLED entirely. This leaves the S3 with spare pins for
-direct sensor input (the button ladder), rather than routing every
-peripheral through a single pin-starved controller.
+A second XIAO ESP32-C3 was added as an I/O expander. A 2-wire UART link
+(TX/RX) connects the two boards and uses only 2 of the S3's 4 free pins, and
+the C3, which has 11 GPIO of its own, takes the SD card and the OLED. That
+leaves the S3 with a spare pin for the button ladder.
 
 ## 4. System Architecture
 
@@ -143,18 +140,16 @@ Raw `analogRead()` values captured on **S3 D2 (GPIO3)**, 12-bit ADC
 | Middle | 11 – 22 | |
 | Right | 0 (constant) | Fully bottoms out the divider |
 
-**Important — resistor-ladder race condition:** pressing two buttons
-simultaneously puts two ladder resistors in parallel, producing a
-resistance (and therefore an ADC reading) that does not match *any* single
-calibrated button. Open-ended cascading thresholds (e.g. "reading ≤ 300 →
-Left") are unsafe, because a stray multi-press value could fall inside a
-single button's range and get silently misreported as that button.
+**Two buttons at once:** pressing two buttons together puts two ladder
+resistors in parallel, which gives a resistance, and so an ADC reading, that
+matches *no* single button. Open-ended thresholds (such as "reading ≤ 300
+means Left") are unsafe here, because a multi-press value can land inside one
+button's range and be reported as that button.
 
-Instead, each state is defined as a **tight window** around its observed
-cluster, with margin for ADC noise but no overlap between windows. Any
-reading that does not fall inside one of the four windows — including
-two-button race conditions — is explicitly classified as invalid rather
-than defaulted into the nearest bucket.
+Instead each state gets a **tight window** around the values actually
+observed, wide enough for ADC noise but with no overlap. Any reading outside
+all four windows, including two-button presses, is marked invalid rather than
+rounded to the nearest one.
 
 | State | Observed range | Window used (with margin) |
 |---|---|---|
@@ -187,8 +182,8 @@ LadderButton readLadderButton() {
 }
 ```
 
-`BTN_INVALID` should be treated by calling code the same as "no valid
-input" — i.e. ignored — rather than acted on.
+Calling code should ignore `BTN_INVALID` the same way it ignores "no button
+pressed", rather than acting on it.
 
 ## 7. Known Hardware Considerations
 
@@ -197,19 +192,19 @@ input" — i.e. ignored — rather than acted on.
   GPIO9 caused the C3 to lock into UART download mode at boot whenever the
   SD card's DO line pulled the pin low during reset sampling.
 - **ESP32-S3 strapping pins are GPIO0, GPIO3, GPIO45, GPIO46.** The button
-  ladder's signal line sits on GPIO3 (D2) — functional and verified stable
-  across repeated power cycles, but it is the S3's one strapping pin in use
-  and should be the first suspect if intermittent boot issues ever appear.
-  **D3 (GPIO4)** remains free as a zero-risk fallback pin.
+  ladder's signal line sits on GPIO3 (D2). It works, and it has been stable
+  across repeated power cycles, but it is the one strapping pin in use on the
+  S3, so it is the first thing to suspect if boot problems ever show up.
+  **D3 (GPIO4)** is still free as a safe fallback.
 - All analog/ADC-capable pins in the system are now fully committed: S3 has
   one ADC pin left (D3); the C3's remaining free pins (D0, D8, D9) are
   digital-only.
 
 ## 8. Bill of Materials & Cost Analysis
 
-Prices below are **typical AliExpress/China-sourced estimates in USD**,
-current as of writing. Actual prices vary by seller and shipping tier —
-verify current listings before finalizing a competition budget.
+Prices below are rough AliExpress estimates in USD at the time of writing.
+Real prices vary by seller and shipping tier, so check current listings before
+setting a budget.
 
 | Item | Qty | Est. Unit Price | Est. Subtotal |
 |---|---|---|---|
@@ -223,7 +218,5 @@ verify current listings before finalizing a competition budget.
 | Misc. (resistor, headers, USB-C cable) | 1 | $1–2 | $1.50 |
 | **Total (estimated)** | | | **≈ $37.50** |
 
-**Cost note:** the entire dual-controller system — audio input, SD logging,
-OLED display, and analog button input — comes in **under $40** using
-commodity China-sourced parts, which is a meaningful cost-efficiency point
-if presented alongside functionality at competition.
+**Cost note:** the whole two-controller system (audio input, SD logging, OLED
+display and analog buttons) comes in **under $40** with off-the-shelf parts.

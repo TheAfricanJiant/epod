@@ -1,5 +1,5 @@
 // ============================================================================
-//  Smart ePod - Brain 1: ESP32 WROVER
+//  Smart ePod - Brain 1: ESP32 WROOM
 //  Audio output, OLED user interface, resistor-ladder keypad.
 //
 //  ---------------------------------------------------------------------------
@@ -171,7 +171,7 @@ static uint8_t stageBuf[DAC_PUSH_CHUNK];
 static uint8_t silenceBuf[DAC_PUSH_CHUNK];
 
 // --- link ---
-// The S3->WROVER direction carries text or raw PCM, never both. DRAIN is the
+// The S3->WROOM direction carries text or raw PCM, never both. DRAIN is the
 // short window after a stream ends where stragglers are swallowed so the next
 // command is not parsed out of the middle of the audio.
 enum LinkMode { LINK_TEXT, LINK_PCM, LINK_DRAIN };
@@ -708,7 +708,7 @@ void handleCommand(char* line) {
   } else if (strcmp(line, "STATUS") == 0) {
     printStatus();
   } else if (strcmp(line, "PING") == 0) {
-    sendLine("PONG - WROVER link is active");
+    sendLine("PONG - WROOM link is active");
   } else if (strcmp(line, "VOL") == 0) {
     char l[48];
     snprintf(l, sizeof(l), "VOL %u", volume);
@@ -750,7 +750,7 @@ void handleCommand(char* line) {
 }
 
 void printHelp() {
-  sendLine("WROVER commands:");
+  sendLine("WROOM commands:");
   sendLine("  HELP STATUS PING BATT");
   sendLine("  TRACK <i> <n> <name>  - set display");
   sendLine("  STATE <text>          - set status line");
@@ -1552,13 +1552,13 @@ void reportResetReason() {
     case ESP_RST_BROWNOUT:  why = "BROWNOUT - the 3V3 rail dipped"; break;
     default:                why = "unknown"; break;
   }
-  Serial.print("WROVER last reset: ");
+  Serial.print("WROOM last reset: ");
   Serial.println(why);
 
   if (reason == ESP_RST_POWERON) {
     crumbMagic = 0;                              // cold boot: no history
   } else if (crumbMagic == CRUMB_MAGIC) {
-    Serial.print("WROVER was in: ");
+    Serial.print("WROOM was in: ");
     Serial.println(crumb);
   }
 }
@@ -1591,7 +1591,7 @@ void setup() {
   if (dacReady) dacIdleSilence();
   if (!dacReady) {
     Serial.println("DAC init FAILED");
-    // Say so over the link too: the WROVER's own console is rarely watched,
+    // Say so over the link too: the WROOM's own console is rarely watched,
     // and silent audio with a full buffer looks exactly like a hang.
     sendLine("MSG DAC INIT FAILED");
   }
@@ -1607,7 +1607,7 @@ void setup() {
   screen = SCREEN_SPLASH;
   uiDirty = true;
 
-  Serial.println("WROVER ready.");
+  Serial.println("WROOM ready.");
 }
 
 void loop() {
